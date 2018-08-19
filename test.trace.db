@@ -1,0 +1,3 @@
+2018-08-18 18:13:34 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "USER" already exists; SQL statement:
+CREATE TABLE user (id INTEGER PRIMARY KEY, name VARCHAR) [42101-197]

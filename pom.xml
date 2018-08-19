@@ -47,22 +47,22 @@
 			<artifactId>jooby-assets</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.github.ByronWang</groupId>
-			<artifactId>nebula-asm</artifactId>
-			<version>master-SNAPSHOT</version>
-		</dependency>
-		
+
+
 		<!-- jdbi -->
 		<dependency>
 			<groupId>org.jooby</groupId>
 			<artifactId>jooby-jdbi3</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jdbi</groupId>
 			<artifactId>jdbi3-sqlobject</artifactId>
 			<version>${jdbi3.version}</version>
+		</dependency>
+		<!-- jdbc -->
+		<dependency>
+			<groupId>org.jooby</groupId>
+			<artifactId>jooby-jdbc</artifactId>
 		</dependency>
 
 		<!-- h2 driver -->
@@ -113,6 +113,11 @@
 			<groupId>nebula</groupId>
 			<artifactId>nebula-lang</artifactId>
 			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>nebula</groupId>
+			<artifactId>nebula-asm</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

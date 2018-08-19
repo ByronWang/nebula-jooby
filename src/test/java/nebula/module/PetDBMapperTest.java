@@ -50,8 +50,8 @@ public class PetDBMapperTest extends TestBase {
 
 					mv.LOAD("rs");
 					mv.LOADConst(name);
-					mv.INTERFACE(ResultSet.class, jdbcFuncName).param(String.class).reTurn(jdbcType).INVOKE();
-					mv.STATIC(Long.class, "valueOf").param(long.class).reTurn(pojoType).INVOKE();
+					mv.INTERFACE(ResultSet.class, jdbcFuncName).parameter(String.class).reTurn(jdbcType).INVOKE();
+					mv.STATIC(Long.class, "valueOf").parameter(long.class).reTurn(pojoType).INVOKE();
 				}
 				{
 					String name = "name";
@@ -61,7 +61,7 @@ public class PetDBMapperTest extends TestBase {
 
 					mv.LOAD("rs");
 					mv.LOADConst(name);
-					mv.INTERFACE(ResultSet.class, jdbcFuncName).param(jdbcClass).reTurn(pojoClass).INVOKE();
+					mv.INTERFACE(ResultSet.class, jdbcFuncName).parameter(jdbcClass).reTurn(pojoClass).INVOKE();
 				}
 
 				{
@@ -72,7 +72,7 @@ public class PetDBMapperTest extends TestBase {
 
 					mv.LOAD("rs");
 					mv.LOADConst(name);
-					mv.INTERFACE(ResultSet.class, jdbcFuncName).param(jdbcClass).reTurn(pojoClass).INVOKE();
+					mv.INTERFACE(ResultSet.class, jdbcFuncName).parameter(jdbcClass).reTurn(pojoClass).INVOKE();
 				}
 
 				mv.INVOKESPECIAL(targetClazz, null, "<init>", Long.class.getName(), String.class.getName(),

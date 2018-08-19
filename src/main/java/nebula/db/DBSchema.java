@@ -1,10 +1,8 @@
 package nebula.db;
 
 import java.sql.Types;
-import java.util.EnumMap;
 
 import nebula.lang.RawTypes;
-import nebula.lang.Type;
 
 public class DBSchema {
 
@@ -33,10 +31,10 @@ public class DBSchema {
 		dbTypeMap.put(RawTypes.Timestamp, Types.TIMESTAMP);
 	}
 
-	final protected EnumMap<RawTypes, Integer> dbTypeMap = new EnumMap<RawTypes, Integer>(RawTypes.class);
+	final protected Mapping<RawTypes, Integer> dbTypeMap = new Mapping<>();
 
 	protected int getJdbcType(RawTypes rawtype) {
-		return dbTypeMap.get(rawtype);
+		return dbTypeMap.getRight(rawtype);
 	}
 
 	public DbColumn makeColumn(String fieldName, String columnName, boolean key, boolean nullable, boolean array,
@@ -86,10 +84,10 @@ public class DBSchema {
 	// public abstract <T extends HasID> Persistence<T> getPersister(Class<T> t,
 	// Type type);
 
-	public DbSqlHelper builderSQLHelper(Type type) {
-//		return new DbSqlHelper(this, type);//TODO 
-		return null;
-	}
+//	public DbSqlHelper builderSQLHelper(Type type) {
+////		return new DbSqlHelper(this, type);//TODO 
+//		return null;
+//	}
 
 	public String builderAddColumn(String tableName, DbColumn column) {
 		if (column.key) {

@@ -10,7 +10,6 @@ import org.jooby.jdbc.Jdbc;
 import org.jooby.jdbi.Jdbi3;
 import org.jooby.jdbi.TransactionalRequest;
 import org.jooby.json.Jackson;
-import org.jooby.rocker.Rockerby;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
