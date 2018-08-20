@@ -52,21 +52,21 @@ public class UserRepositoryBuilder {
 
 		insertBridge(cw, clazz, targetClazz);
 
-		deleteLambda(cw);
-		
-		updateLambda(cw, targetClazz);
+		deleteLambda(cw, "DELETE user WHERE id=:id");
 
-		insertLambda(cw, targetClazz);
+		updateLambda(cw, targetClazz, "UPDATE user SET name=:name WHERE id=:id");
 
-		findbyidLamda(cw, targetClazz, mapClazz);
+		insertLambda(cw, targetClazz, "INSERT INTO user(id, name) VALUES (:id, :name)");
 
-		listLambda(cw, mapClazz);
+		findbyidLamda(cw, targetClazz, mapClazz, "SELECT * FROM user ORDER BY name WHERE id=:id");
+
+		listLambda(cw, mapClazz, "SELECT * FROM user");
 
 		return cw.end().toByteArray();
 
 	}
 
-	private void listLambda(ClassBody cw, String mapClazz) {
+	private void listLambda(ClassBody cw, String mapClazz, String querySQL) {
 		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, "lambda$list$0")
 			.parameter("handle", Handle.class)
 			.reTurn(List.class)
@@ -74,7 +74,7 @@ public class UserRepositoryBuilder {
 			.code(mv -> {
 				mv.line();
 				mv.LOAD(0);
-				mv.LOADConst("SELECT * FROM user");
+				mv.LOADConst(querySQL);
 				mv.VIRTUAL(Handle.class, "createQuery").parameter(String.class).reTurn(Query.class).INVOKE();
 
 				mv.NEW(mapClazz);
@@ -87,7 +87,7 @@ public class UserRepositoryBuilder {
 			});
 	}
 
-	private void findbyidLamda(ClassBody cw, String targetClazz, String mapClazz) {
+	private void findbyidLamda(ClassBody cw, String targetClazz, String mapClazz, String findbyidSQL) {
 		cw.method(Opcodes.ACC_PRIVATE + Opcodes.ACC_STATIC + Opcodes.ACC_SYNTHETIC, "lambda$findById$1")
 			.parameter("id", long.class)
 			.parameter("handle", Handle.class)
@@ -96,7 +96,7 @@ public class UserRepositoryBuilder {
 			.code(mv -> {
 				mv.line();
 				mv.LOAD(2);
-				mv.LOADConst("SELECT * FROM user ORDER BY name WHERE id=:id");
+				mv.LOADConst(findbyidSQL);
 				mv.VIRTUAL(Handle.class, "createQuery").parameter(String.class).reTurn(Query.class).INVOKE();
 
 				mv.LOADConst("id");
@@ -121,7 +121,7 @@ public class UserRepositoryBuilder {
 			});
 	}
 
-	private void deleteLambda(ClassBody cw) {
+	private void deleteLambda(ClassBody cw, String deleteSQL) {
 		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, "lambda$delete$4")
 			.parameter("id", long.class)
 			.parameter("handle", Handle.class)
@@ -130,7 +130,7 @@ public class UserRepositoryBuilder {
 			.code(mv -> {
 				mv.line();
 				mv.LOAD(2);
-				mv.LOADConst("DELETE user WHERE id=:id");
+				mv.LOADConst(deleteSQL);
 				mv.VIRTUAL(Handle.class, "createUpdate").parameter(String.class).reTurn(Update.class).INVOKE();
 				mv.line();
 				mv.LOADConst("id");
@@ -151,7 +151,7 @@ public class UserRepositoryBuilder {
 			});
 	}
 
-	private void updateLambda(ClassBody cw, String targetClazz) {
+	private void updateLambda(ClassBody cw, String targetClazz, String updateSQL) {
 		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, "lambda$update$3")
 			.parameter("user", targetClazz)
 			.parameter("handle", Handle.class)
@@ -161,7 +161,7 @@ public class UserRepositoryBuilder {
 
 				mv.line();
 				mv.LOAD(1);
-				mv.LOADConst("UPDATE user SET name=:name WHERE id=:id");
+				mv.LOADConst(updateSQL);
 				mv.VIRTUAL(Handle.class, "createUpdate").parameter(String.class).reTurn(Update.class).INVOKE();
 				{
 					mv.line();
@@ -198,7 +198,7 @@ public class UserRepositoryBuilder {
 			});
 	}
 
-	private void insertLambda(ClassBody cw, String targetClazz) {
+	private void insertLambda(ClassBody cw, String targetClazz, String insertSQL) {
 		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, "lambda$insert$2")
 			.parameter("user", targetClazz)
 			.parameter("handle", Handle.class)
@@ -207,7 +207,7 @@ public class UserRepositoryBuilder {
 			.code(mv -> {
 				mv.line();
 				mv.LOAD(1);
-				mv.LOADConst("INSERT INTO user(id, name) VALUES (:id, :name)");
+				mv.LOADConst(insertSQL);
 				mv.VIRTUAL(Handle.class, "createUpdate").parameter(String.class).reTurn(Update.class).INVOKE();
 				{
 					mv.line();
