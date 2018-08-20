@@ -1,406 +1,94 @@
 package nebula.module;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
-import static org.objectweb.asm.Opcodes.*;
-import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.HandleCallback;
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.mapper.RowMapper;
-import org.jdbi.v3.core.result.ResultIterable;
-import org.jdbi.v3.core.statement.Query;
-import org.jdbi.v3.core.statement.SqlStatement;
-import org.jdbi.v3.core.statement.Update;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Opcodes;
-
-import nebula.tinyasm.ClassBuilder;
-import nebula.tinyasm.data.ClassBody;
-import nebula.tinyasm.data.GenericClazz;
-import nebula.tinyasm.util.RefineCode;
 
 public class UserRepositoryTest extends TestBase {
+	Jdbi jdbi = Jdbi.create("jdbc:h2:mem:test"); // (H2 in-memory database)
 
-	String clazz = UserRepository.class.getName();
-
-	@Test
-	public void testPrint() throws IOException {
-		System.out.println(RefineCode.refineCode(toString(clazz)));
+	@Before
+	public void before() {
+		jdbi.open();
 	}
 
+	@After
+	public void after() {
+	}
+
+//	@Test
+//	public void testPrint() throws IOException {
+//		System.out.println(RefineCode.refineCode(toString(clazz)));
+//	}
+
+	class MyClassLoader extends ClassLoader {
+		public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
+			Class<?> clazz = super.defineClass(name, b, off, len);
+			return clazz;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	@Test
-	public void testConstructerEmpty() throws IOException {
+	public void testConstructerEmpty() throws IOException, InstantiationException, IllegalAccessException,
+			NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
 
+		String clazz = "ThisRepository";
 		String targetClazz = User.class.getName();
-		String mapClazz = "nebula/module/UserMapper";
-		ClassBody cw = ClassBuilder.make(clazz).imPlements(Repository.class, targetClazz).body();
+		String mapClazz = "nebula.module.UserMapper";
 
-		cw.referInnerClass(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, MethodHandles.class.getName(), "Lookup");
-		cw.field(0, "jdbi", Jdbi.class);
+		UserRepositoryBuilder builder = new UserRepositoryBuilder();
 
-		cw.method("<init>").parameter("jdbi", Jdbi.class).code(mv -> {
-			Label l0 = mv.codeNewLabel();
-			mv.codeAccessLabel(l0);
-			mv.line();
-			mv.LOAD(0);
-			mv.SPECIAL(Object.class, "<init>").INVOKE();
-			mv.line();
-			mv.LOAD(0);
-			mv.LOAD(1);
-			mv.PUTFIELD_OF_THIS("jdbi");
-			Label l2 = mv.codeNewLabel();
-			mv.codeAccessLabel(l2);
-			mv.line();
-			mv.RETURN();
+		byte[] clazzcode = builder.make(clazz, targetClazz, mapClazz);
+
+//		String codeActual = toString(clazzcode);
+//		String codeExpected = toString(clazz);
+//		assertEquals("Code", codeExpected, codeActual);
+
+		MyClassLoader mcl = new MyClassLoader();
+		Class<?> hw = mcl.defineClassByName(clazz, clazzcode, 0, clazzcode.length);
+
+		Constructor<?> ct = hw.getConstructor(Jdbi.class);
+
+		// 利用反射创建对象
+		Repository<User> userRepository = (Repository<User>) ct.newInstance(jdbi);
+		jdbi.useHandle(handle -> {
+			handle.execute("CREATE TABLE user (id INTEGER PRIMARY KEY, name VARCHAR)");
+			handle.commit();
 		});
 
-		cw.method("list")
-			.parameter("start", int.class)
-			.parameter("max", int.class)
-			.reTurn(GenericClazz.generic(List.class, targetClazz))
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(0);
-				mv.GET_THIS_FIELD("jdbi");
+//		UserRepository userRepository = new UserRepository(jdbi);
+		List<User> users1 = userRepository.list(0, 0);
 
-				mv.STATIC(clazz, "lambda$list$0")
-					.parameter(Handle.class)
-					.reTurn(GenericClazz.genericBase(Object.class, List.class))
-					.LAMBDA(Jdbi.class.getName(), "withHandle")
-					.reTurn(HandleCallback.class)
-					.INVOKE();
+		User a = new User(0, "wangshilian");
+		User b = new User(2, "lixiang");
 
-				mv.VIRTUAL(Jdbi.class, "withHandle")
-					.parameter(HandleCallback.class)
-					.reTurn(GenericClazz.genericBase(Object.class, targetClazz))
-					.INVOKE();
-				mv.CHECKCAST(List.class);
-				mv.RETURNTop();
-				Label l2 = mv.codeNewLabel();
-				mv.codeAccessLabel(l2);
-			});
+		userRepository.insert(a);
 
-		cw.method("findById").parameter("id", long.class).reTurn(targetClazz).code(mv -> {
+		users1 = userRepository.list(0, 0);
+		System.out.println(users1);
 
-			mv.line();
-			mv.LOAD(0);
-			mv.GET_THIS_FIELD("jdbi");
+		userRepository.insert(b);
 
-			mv.LOAD(1);
-			mv.STATIC(clazz, "lambda$findById$1")
-				.parameter(Handle.class)
-				.reTurn(GenericClazz.genericBase(Object.class, targetClazz))
-				.LAMBDA(Jdbi.class.getName(), "withHandle")
-				.parameter(long.class)
-				.reTurn(HandleCallback.class)
-				.INVOKE();
+		users1 = userRepository.list(0, 0);
+		System.out.println(users1);
 
-			mv.VIRTUAL(Jdbi.class, "withHandle").parameter(HandleCallback.class).reTurn(Object.class).INVOKE();
-			mv.CHECKCAST(targetClazz);
-			mv.RETURNTop();
+		User b2 = new User(2, "lixiang_new_name");
+		userRepository.update(b2);
 
-		});
+		users1 = userRepository.list(0, 0);
+		System.out.println(users1);
+		userRepository.delete(a.getId());
 
-		cw.method("insert").parameter("user", targetClazz).reTurn(boolean.class).code(mv -> {
-			mv.line();
-			mv.LOAD(0);
-			mv.GET_THIS_FIELD("jdbi");
-			mv.LOAD(1);
+		users1 = userRepository.list(0, 0);
+		System.out.println(users1);
 
-			mv.STATIC(clazz, "lambda$insert$2")
-				.parameter(Handle.class)
-				.reTurn(GenericClazz.genericBase(Object.class, Integer.class))
-				.LAMBDA(Jdbi.class.getName(), "withHandle")
-				.parameter(targetClazz)
-				.reTurn(HandleCallback.class)
-				.INVOKE();
-
-			mv.VIRTUAL(Jdbi.class, "withHandle").parameter(HandleCallback.class).reTurn(Object.class).INVOKE();
-			mv.CHECKCAST(Integer.class);
-			mv.VIRTUAL(Integer.class, "intValue").reTurn(int.class).INVOKE();
-			mv.LOADConst(1);
-			Label labelElse = mv.codeNewLabel();
-			mv.IF_ICMPNE(labelElse);
-			mv.LOADConst(1);
-			mv.RETURNTop();
-			mv.codeAccessLabel(labelElse);
-			mv.LOADConst(0);
-			mv.RETURNTop();
-		});
-
-		cw.method("update").parameter("user", targetClazz).reTurn(boolean.class).code(mv -> {
-			mv.line();
-			mv.LOAD(0);
-			mv.GET_THIS_FIELD("jdbi");
-			mv.LOAD(1);
-
-			mv.STATIC(clazz, "lambda$update$3")
-				.parameter(Handle.class)
-				.reTurn(GenericClazz.genericBase(Object.class, Integer.class))
-				.LAMBDA(Jdbi.class.getName(), "withHandle")
-				.parameter(targetClazz)
-				.reTurn(HandleCallback.class)
-				.INVOKE();
-
-			mv.VIRTUAL(Jdbi.class, "withHandle").parameter(HandleCallback.class).reTurn(Object.class).INVOKE();
-			mv.CHECKCAST(Integer.class);
-			mv.VIRTUAL(Integer.class, "intValue").reTurn(int.class).INVOKE();
-
-			mv.line();
-			mv.LOADConst(1);
-			mv.line();
-			Label labelElse = mv.codeNewLabel();
-			mv.IF_ICMPNE(labelElse);
-			mv.LOADConst(1);
-			mv.RETURNTop();
-			mv.codeAccessLabel(labelElse);
-			mv.LOADConst(0);
-			mv.RETURNTop();
-		});
-
-		cw.method("delete").parameter("id", long.class).reTurn(boolean.class).code(mv -> {
-			mv.line();
-			mv.LOAD(0);
-			mv.GET_THIS_FIELD("jdbi");
-			mv.LOAD(1);
-
-			mv.STATIC(clazz, "lambda$delete$4")
-				.parameter(Handle.class)
-				.reTurn(GenericClazz.genericBase(Object.class, Integer.class))
-				.LAMBDA(Jdbi.class.getName(), "withHandle")
-				.parameter(long.class)
-				.reTurn(HandleCallback.class)
-				.INVOKE();
-
-			mv.VIRTUAL(Jdbi.class, "withHandle").parameter(HandleCallback.class).reTurn(Object.class).INVOKE();
-			mv.CHECKCAST(Integer.class);
-			mv.VIRTUAL(Integer.class, "intValue").reTurn(int.class).INVOKE();
-
-			mv.line();
-			mv.LOADConst(1);
-			mv.line();
-			Label labelElse = mv.codeNewLabel();
-			mv.IF_ICMPNE(labelElse);
-			mv.LOADConst(1);
-			mv.RETURNTop();
-			mv.codeAccessLabel(labelElse);
-			mv.LOADConst(0);
-			mv.RETURNTop();
-		});
-
-		cw.method(Opcodes.ACC_PUBLIC + Opcodes.ACC_BRIDGE + Opcodes.ACC_SYNTHETIC, "findById")
-			.parameter("id", long.class)
-			.reTurn(Object.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(0);
-				mv.LOAD(1);
-				mv.VIRTUAL(clazz, "findById").parameter(long.class).reTurn(targetClazz).INVOKE();
-				mv.RETURNTop();
-			});
-
-		cw.method(Opcodes.ACC_PUBLIC + Opcodes.ACC_BRIDGE + Opcodes.ACC_SYNTHETIC, "update")
-			.parameter("user", Object.class)
-			.reTurn(boolean.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(0);
-				mv.LOAD(1);
-				mv.CHECKCAST(targetClazz);
-				mv.VIRTUAL(clazz, "update").parameter(targetClazz).reTurn(boolean.class).INVOKE();
-				;
-				mv.RETURNTop();
-			});
-
-		cw.method(Opcodes.ACC_PUBLIC + Opcodes.ACC_BRIDGE + Opcodes.ACC_SYNTHETIC, "insert")
-			.parameter("user", Object.class)
-			.reTurn(boolean.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(0);
-				mv.LOAD(1);
-				mv.CHECKCAST(targetClazz);
-				mv.VIRTUAL(clazz, "insert").parameter(targetClazz).reTurn(boolean.class).INVOKE();
-				mv.RETURNTop();
-			});
-
-
-		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, "lambda$insert$2")
-			.parameter("user", targetClazz)
-			.parameter("handle", Handle.class)
-			.reTurn(Integer.class)
-			.tHrow(RuntimeException.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(1);
-				mv.LOADConst("INSERT INTO user(id, name) VALUES (:id, :name)");
-				mv.VIRTUAL(Handle.class, "createUpdate").parameter(String.class).reTurn(Update.class).INVOKE();
-				{
-					mv.line();
-					mv.LOADConst("id");
-					mv.LOAD(0);
-					mv.VIRTUAL(targetClazz, "getId").reTurn(int.class).INVOKE();
-					mv.VIRTUAL(Update.class, "bind")
-						.parameter(String.class)
-						.parameter(int.class)
-						.reTurn(SqlStatement.class)
-						.INVOKE();
-					mv.CHECKCAST(Update.class);
-				}
-				{
-					mv.line();
-					mv.LOADConst("name");
-					mv.LOAD(0);
-					mv.VIRTUAL(targetClazz, "getName").reTurn(String.class).INVOKE();
-					mv.VIRTUAL(Update.class, "bind")
-						.parameter(String.class)
-						.parameter(String.class)
-						.reTurn(SqlStatement.class)
-						.INVOKE();
-					mv.CHECKCAST(Update.class);
-				}
-
-				mv.line();
-				mv.VIRTUAL(Update.class, "execute").reTurn(int.class).INVOKE();
-				mv.STATIC(Integer.class, "valueOf").parameter(int.class).reTurn(Integer.class).INVOKE();
-
-				mv.line();
-
-				mv.RETURNTop();
-			});
-
-		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, "lambda$update$3")
-			.parameter("user", targetClazz)
-			.parameter("handle", Handle.class)
-			.reTurn(Integer.class)
-			.tHrow(RuntimeException.class)
-			.code(mv -> {
-
-				mv.line();
-				mv.LOAD(1);
-				mv.LOADConst("UPDATE user SET name=:name WHERE id=:id");
-				mv.VIRTUAL(Handle.class, "createUpdate").parameter(String.class).reTurn(Update.class).INVOKE();
-				{
-					mv.line();
-					mv.LOADConst("id");
-					mv.LOAD(0);
-					mv.VIRTUAL(targetClazz, "getId").reTurn(int.class).INVOKE();
-					mv.VIRTUAL(Update.class, "bind")
-						.parameter(String.class)
-						.parameter(int.class)
-						.reTurn(SqlStatement.class)
-						.INVOKE();
-					mv.CHECKCAST(Update.class);
-				}
-				{
-					mv.line();
-					mv.LOADConst("name");
-					mv.LOAD(0);
-					mv.VIRTUAL(targetClazz, "getName").reTurn(String.class).INVOKE();
-					mv.VIRTUAL(Update.class, "bind")
-						.parameter(String.class)
-						.parameter(String.class)
-						.reTurn(SqlStatement.class)
-						.INVOKE();
-					mv.CHECKCAST(Update.class);
-				}
-
-				mv.line();
-				mv.VIRTUAL(Update.class, "execute").reTurn(int.class).INVOKE();
-				mv.STATIC(Integer.class, "valueOf").parameter(int.class).reTurn(Integer.class).INVOKE();
-
-				mv.line();
-				mv.RETURNTop();
-
-			});
-
-		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, "lambda$delete$4")
-			.parameter("id", long.class)
-			.parameter("handle", Handle.class)
-			.reTurn(Integer.class)
-			.tHrow(RuntimeException.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(2);
-				mv.LOADConst("DELETE user WHERE id=:id");
-				mv.VIRTUAL(Handle.class, "createUpdate").parameter(String.class).reTurn(Update.class).INVOKE();
-				mv.line();
-				mv.LOADConst("id");
-				mv.LOAD(0);
-				mv.VIRTUAL(Update.class, "bind")
-					.parameter(String.class)
-					.parameter(long.class)
-					.reTurn(SqlStatement.class)
-					.INVOKE();
-				mv.CHECKCAST(Update.class);
-
-				mv.line();
-				mv.VIRTUAL(Update.class, "execute").reTurn(int.class).INVOKE();
-				mv.STATIC(Integer.class, "valueOf").parameter(int.class).reTurn(Integer.class).INVOKE();
-
-				mv.line();
-				mv.RETURNTop();
-			});
-
-		cw.method(Opcodes.ACC_PRIVATE + Opcodes.ACC_STATIC + Opcodes.ACC_SYNTHETIC, "lambda$findById$1")
-			.parameter("id", long.class)
-			.parameter("handle", Handle.class)
-			.reTurn(targetClazz)
-			.tHrow(RuntimeException.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(2);
-				mv.LOADConst("SELECT * FROM user ORDER BY name WHERE id=:id");
-				mv.VIRTUAL(Handle.class, "createQuery").parameter(String.class).reTurn(Query.class).INVOKE();
-
-				mv.LOADConst("id");
-				mv.LOAD(0);
-				mv.VIRTUAL(Query.class, "bind")
-					.parameter(String.class)
-					.parameter(long.class)
-					.reTurn(SqlStatement.class)
-					.INVOKE();
-				mv.CHECKCAST(Query.class);
-
-				mv.line();
-				mv.NEW(mapClazz);
-				mv.DUP();
-				mv.SPECIAL(mapClazz, "<init>").INVOKE();
-				mv.VIRTUAL(Query.class, "map").parameter(RowMapper.class).reTurn(ResultIterable.class).INVOKE();
-				mv.INTERFACE(ResultIterable.class, "findOnly").reTurn(Object.class).INVOKE();
-				mv.CHECKCAST(targetClazz);
-
-				mv.line();
-				mv.RETURNTop();
-			});
-
-		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, "lambda$list$0")
-			.parameter("handle", Handle.class)
-			.reTurn(List.class)
-			.tHrow(RuntimeException.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(0);
-				mv.LOADConst("SELECT * FROM user");
-				mv.VIRTUAL(Handle.class, "createQuery").parameter(String.class).reTurn(Query.class).INVOKE();
-
-				mv.NEW(mapClazz);
-				mv.DUP();
-				mv.SPECIAL(mapClazz, "<init>").INVOKE();
-
-				mv.VIRTUAL(Query.class, "map").parameter(RowMapper.class).reTurn(ResultIterable.class).INVOKE();
-				mv.INTERFACE(ResultIterable.class, "list").reTurn(List.class).INVOKE();
-				mv.RETURNTop();
-			});
-
-		String codeActual = toString(cw.end().toByteArray());
-		String codeExpected = toString(clazz);
-		assertEquals("Code", codeExpected, codeActual);
-
+		System.out.println(userRepository.getClass().getName());
 	}
 }

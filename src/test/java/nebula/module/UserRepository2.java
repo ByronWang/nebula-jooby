@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.jdbi.v3.core.Jdbi;
 
-public class UserRepository implements Repository<User> {
+public class UserRepository2 implements Repository<User> {
 	Jdbi jdbi;
 
-	public UserRepository(Jdbi jdbi) {
+	public UserRepository2(Jdbi jdbi) {
 		this.jdbi = jdbi;
 	}
 
