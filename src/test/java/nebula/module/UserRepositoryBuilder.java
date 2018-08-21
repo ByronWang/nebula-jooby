@@ -59,7 +59,7 @@ public class UserRepositoryBuilder {
 		}
 	}
 
-	private void delete(String idName, Class<?> idClazz, String lambdaName) {
+	private void delete(String lambdaName, String idName, Class<?> idClazz) {
 		cw.method("delete").parameter(idName, idClazz).reTurn(boolean.class).code(mv -> {
 			mv.line();
 			mv.LOAD(0);
@@ -91,7 +91,7 @@ public class UserRepositoryBuilder {
 		});
 	}
 
-	private void deleteLambda(String deleteSQL, String idName, Class<Long> idClazz, String lamdaName) {
+	private void deleteLambda(String lamdaName, String deleteSQL, String idName, Class<Long> idClazz) {
 		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, lamdaName)
 			.parameter(idName, idClazz)
 			.parameter("handle", Handle.class)
@@ -121,7 +121,7 @@ public class UserRepositoryBuilder {
 			});
 	}
 
-	private void findById(Class<?> idClazz, String lambdaName) {
+	private void findById(String lambdaName, Class<?> idClazz) {
 		cw.method("findById").parameter("id", long.class).reTurn(targetClazz).code(mv -> {
 
 			mv.line();
@@ -349,29 +349,36 @@ public class UserRepositoryBuilder {
 		init(cw);
 
 		{
-			list("lambda$list$0");
-			listLambda("SELECT * FROM user", "lambda$list$0");
+			String lambdaName = "lambda$list$0";
+			list(lambdaName);
+			listLambda("SELECT * FROM user", lambdaName);
 		}
 		{
-			findById(idClazz, "lambda$findById$1");
+			String lambdaName = "lambda$findById$1";
+			findById(lambdaName, idClazz);
 			findbyidLamda(targetClazz, mapClazz, "SELECT * FROM user ORDER BY name WHERE id=:id", idName, idClazz,
-					"lambda$findById$1");
+					lambdaName);
 			findbyidBridge(idName, idClazz);
 		}
 
 		{
-			insert("lambda$insert$2");
-			insertLambda("INSERT INTO user(id, name) VALUES (:id, :name)", "lambda$insert$2");
+			String lambdaName = "lambda$insert$2";
+			insert(lambdaName);
+			insertLambda("INSERT INTO user(id, name) VALUES (:id, :name)", lambdaName);
 			insertBridge();
 		}
+
 		{
-			update("lambda$update$3");
-			updateLambda("UPDATE user SET name=:name WHERE id=:id", "lambda$update$3");
+			String lamdaName = "lambda$update$3";
+			update(lamdaName);
+			updateLambda("UPDATE user SET name=:name WHERE id=:id", lamdaName);
 			updateBridge();
 		}
+
 		{
-			delete(idName, idClazz, "lambda$delete$4");
-			deleteLambda("DELETE user WHERE id=:id", idName, idClazz, "lambda$delete$4");
+			String lamdaName = "lambda$delete$4";
+			delete(lamdaName, idName, idClazz);
+			deleteLambda(lamdaName, "DELETE user WHERE id=:id", idName, idClazz);
 		}
 
 		return cw.end().toByteArray();
