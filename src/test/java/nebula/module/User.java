@@ -1,14 +1,14 @@
 package nebula.module;
 
 public class User {
-	private int id;
+	private long id;
 	private String name;
 	public User(int id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	public String getName() {

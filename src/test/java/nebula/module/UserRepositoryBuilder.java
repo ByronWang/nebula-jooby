@@ -28,30 +28,31 @@ import nebula.tinyasm.data.MethodCode;
 
 public class UserRepositoryBuilder {
 
-	private void bindID(MethodCode mv, String targetClazz) {
+	private void bind(MethodCode mv, String targetClazz, String paramName, String propGetName, Class<?> propGetClazz) {
 		{
 			mv.line();
-			mv.LOADConst("id");
-			mv.LOAD(0);
-			mv.VIRTUAL(targetClazz, "getId").reTurn(int.class).INVOKE();
+			mv.LOADConst(paramName);
+			mv.LOAD("data");
+			mv.VIRTUAL(targetClazz, propGetName).reTurn(propGetClazz).INVOKE();
 			mv.VIRTUAL(Update.class, "bind")
 				.parameter(String.class)
-				.parameter(int.class)
+				.parameter(propGetClazz)
 				.reTurn(SqlStatement.class)
 				.INVOKE();
 			mv.CHECKCAST(Update.class);
 		}
 	}
 
-	private void bindName(MethodCode mv, String targetClazz) {
+	private void bindName(MethodCode mv, String targetClazz, String paramName, String propGetName,
+			Class<?> propGetClazz) {
 		{
 			mv.line();
-			mv.LOADConst("name");
-			mv.LOAD(0);
-			mv.VIRTUAL(targetClazz, "getName").reTurn(String.class).INVOKE();
+			mv.LOADConst(paramName);
+			mv.LOAD("data");
+			mv.VIRTUAL(targetClazz, propGetName).reTurn(propGetClazz).INVOKE();
 			mv.VIRTUAL(Update.class, "bind")
 				.parameter(String.class)
-				.parameter(String.class)
+				.parameter(propGetClazz)
 				.reTurn(SqlStatement.class)
 				.INVOKE();
 			mv.CHECKCAST(Update.class);
@@ -264,8 +265,8 @@ public class UserRepositoryBuilder {
 				mv.LOADConst(insertSQL);
 				mv.VIRTUAL(Handle.class, "createUpdate").parameter(String.class).reTurn(Update.class).INVOKE();
 
-				bindID(mv, targetClazz);
-				bindName(mv, targetClazz);
+				bind(mv, targetClazz, "id", "getId", long.class);
+				bind(mv, targetClazz, "name", "getName", String.class);
 
 				mv.line();
 				mv.VIRTUAL(Update.class, "execute").reTurn(int.class).INVOKE();
@@ -380,9 +381,9 @@ public class UserRepositoryBuilder {
 	private void update(String lambdaName) {
 		cw.method("update").parameter("data", targetClazz).reTurn(boolean.class).code(mv -> {
 			mv.line();
-			mv.LOAD(0);
+			mv.LOAD("this");
 			mv.GET_THIS_FIELD("jdbi");
-			mv.LOAD(1);
+			mv.LOAD("data");
 
 			mv.STATIC(clazz, lambdaName)
 				.parameter(Handle.class)
@@ -425,7 +426,7 @@ public class UserRepositoryBuilder {
 
 	private void updateLambda(String updateSQL, String lamdaName) {
 		cw.method(ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC, lamdaName)
-			.parameter("user", targetClazz)
+			.parameter("data", targetClazz)
 			.parameter("handle", Handle.class)
 			.reTurn(Integer.class)
 			.tHrow(RuntimeException.class)
@@ -435,8 +436,8 @@ public class UserRepositoryBuilder {
 				mv.LOAD(1);
 				mv.LOADConst(updateSQL);
 				mv.VIRTUAL(Handle.class, "createUpdate").parameter(String.class).reTurn(Update.class).INVOKE();
-				bindID(mv, targetClazz);
-				bindName(mv, targetClazz);
+				bind(mv, targetClazz, "id", "getId", long.class);
+				bindName(mv, targetClazz, "name", "getName", String.class);
 
 				mv.line();
 				mv.VIRTUAL(Update.class, "execute").reTurn(int.class).INVOKE();
