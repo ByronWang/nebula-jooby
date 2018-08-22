@@ -7,7 +7,8 @@ import org.jdbi.v3.core.statement.Update;
 
 public class UserRepository2 implements Repository<User> {
 	Jdbi jdbi;
-
+	static UserMapper mapper = new UserMapper();
+	
 	public UserRepository2(Jdbi jdbi) {
 		this.jdbi = jdbi;
 	}

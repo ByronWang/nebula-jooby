@@ -36,7 +36,7 @@ public class UserRepositoryBuilder {
 
 	String mapClazz;
 
-	private void bind() {
+	private void make_bind() {
 		cw.method("bind")
 			.ACC_STATIC()
 			.parameter("update", Update.class)
@@ -80,12 +80,15 @@ public class UserRepositoryBuilder {
 
 		cw.referInnerClass(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, MethodHandles.class.getName(), "Lookup");
 		cw.field(0, "jdbi", Jdbi.class);
-		cw.field(0, "mapper", UserMapper.class);
+		cw.field(ACC_STATIC, "mapper", UserMapper.class);
 
-		make_init(cw);
-		bind();
+		make_clinit(clazz, mapClazz);
+		make_init();
+
+		make_bind();
 
 		make_list("SELECT * FROM user");
+
 		make_findbyid(idName, idClazz, "SELECT * FROM user ORDER BY name WHERE id=:id");
 
 		make_insert("INSERT INTO user(id, name,description) VALUES (:id, :name, :description)");
@@ -96,6 +99,17 @@ public class UserRepositoryBuilder {
 
 		return cw.end().toByteArray();
 
+	}
+
+	private void make_clinit(String clazz, String mapClazz) {
+		cw.method(ACC_STATIC, "<clinit>").code(mv -> {
+			mv.line();
+			mv.NEW(mapClazz);
+			mv.DUP();
+			mv.SPECIAL(mapClazz, "<init>").INVOKE();
+			mv.PUTSTATIC(clazz, "mapper", mapClazz);
+			mv.RETURN();
+		});
 	}
 
 	private void make_delete(String idName, Class<Long> idClazz, String deleteSQL) {
@@ -228,7 +242,7 @@ public class UserRepositoryBuilder {
 			});
 	}
 
-	private void make_init(ClassBody cw) {
+	private void make_init() {
 		cw.method("<init>").parameter("jdbi", Jdbi.class).code(mv -> {
 			Label l0 = mv.codeNewLabel();
 			mv.codeAccessLabel(l0);
@@ -236,11 +250,11 @@ public class UserRepositoryBuilder {
 			mv.LOAD(0);
 			mv.SPECIAL(Object.class, "<init>").INVOKE();
 			mv.line();
-			mv.LOAD(0);
-			mv.LOAD(1);
-			mv.PUTFIELD_OF_THIS("jdbi");
-			Label l2 = mv.codeNewLabel();
-			mv.codeAccessLabel(l2);
+			{
+				mv.LOAD("this");
+				mv.LOAD("jdbi");
+				mv.PUTFIELD_OF_THIS("jdbi");
+			}
 			mv.line();
 			mv.RETURN();
 		});
@@ -357,9 +371,7 @@ public class UserRepositoryBuilder {
 				mv.LOADConst(querySQL);
 				mv.VIRTUAL(Handle.class, "createQuery").parameter(String.class).reTurn(Query.class).INVOKE();
 
-				mv.NEW(mapClazz);
-				mv.DUP();
-				mv.SPECIAL(mapClazz, "<init>").INVOKE();
+				mv.GETSTATIC(clazz, "mapper", mapClazz);
 
 				mv.VIRTUAL(Query.class, "map").parameter(RowMapper.class).reTurn(ResultIterable.class).INVOKE();
 				mv.INTERFACE(ResultIterable.class, "list").reTurn(List.class).INVOKE();

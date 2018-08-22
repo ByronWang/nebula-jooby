@@ -10,6 +10,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import nebula.tinyasm.util.RefineCode;
+
 public class UserRepositoryTest extends TestBase {
 	Jdbi jdbi = Jdbi.create("jdbc:h2:mem:test"); // (H2 in-memory database)
 
@@ -22,10 +24,10 @@ public class UserRepositoryTest extends TestBase {
 	public void after() {
 	}
 
-//	@Test
-//	public void testPrint() throws IOException {
-//		System.out.println(RefineCode.refineCode(toString(clazz)));
-//	}
+	@Test
+	public void testPrint() throws IOException {
+		System.out.println(RefineCode.refineCode(toString(UserRepository2.class)));
+	}
 
 	class MyClassLoader extends ClassLoader {
 		public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
