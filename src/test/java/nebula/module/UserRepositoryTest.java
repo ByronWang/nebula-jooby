@@ -59,15 +59,15 @@ public class UserRepositoryTest extends TestBase {
 		// 利用反射创建对象
 		Repository<User> userRepository = (Repository<User>) ct.newInstance(jdbi);
 		jdbi.useHandle(handle -> {
-			handle.execute("CREATE TABLE user (id INTEGER PRIMARY KEY, name VARCHAR)");
+			handle.execute("CREATE TABLE user (id INTEGER PRIMARY KEY, name VARCHAR ,description VARCHAR)");
 			handle.commit();
 		});
 
 //		UserRepository userRepository = new UserRepository(jdbi);
 		List<User> users1 = userRepository.list(0, 0);
 
-		User a = new User(0, "wangshilian");
-		User b = new User(2, "lixiang");
+		User a = new User(0, "wangshilian","desctiption0");
+		User b = new User(2, "lixiang","desctiption2");
 
 		userRepository.insert(a);
 
@@ -79,7 +79,7 @@ public class UserRepositoryTest extends TestBase {
 		users1 = userRepository.list(0, 0);
 		System.out.println(users1);
 
-		User b2 = new User(2, "lixiang_new_name");
+		User b2 = new User(2, "lixiang_new_name","desctiption");
 		userRepository.update(b2);
 
 		users1 = userRepository.list(0, 0);

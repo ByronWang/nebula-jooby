@@ -29,8 +29,8 @@ public class JDBIUserTest extends TestBase {
 		UserRepository2 userRepository = new UserRepository2(jdbi);
 		List<User> users1 = userRepository.list(0, 0);
 
-		User a = new User(0, "wangshilian");
-		User b = new User(2, "lixiang");
+		User a = new User(0, "wangshilian","desctiption");
+		User b = new User(2, "lixiang","desctiption");
 
 		userRepository.insert(a);
 
@@ -42,7 +42,7 @@ public class JDBIUserTest extends TestBase {
 		users1 = userRepository.list(0, 0);
 		System.out.println(users1);
 		
-		User b2 = new User(2, "lixiang_new_name");
+		User b2 = new User(2, "lixiang_new_name","desctiption");
 		userRepository.update(b2);
 
 		users1 = userRepository.list(0, 0);

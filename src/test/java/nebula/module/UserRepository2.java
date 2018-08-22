@@ -3,6 +3,7 @@ package nebula.module;
 import java.util.List;
 
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.statement.Update;
 
 public class UserRepository2 implements Repository<User> {
 	Jdbi jdbi;
@@ -31,29 +32,30 @@ public class UserRepository2 implements Repository<User> {
 	@Override
 	public boolean insert(User pet) {
 		return jdbi.withHandle(handle -> {
-			return handle.createUpdate("INSERT INTO user(id, name) VALUES (:id, :name)")
-				.bind("id", pet.getId())
-				.bind("name", pet.getName())
-				.execute();
+			Update update = handle.createUpdate("INSERT INTO user(id, name) VALUES (:id, :name)");
+			bind(update, pet);
+			return update.execute();
 		}) == 1;
 	}
 
 	@Override
 	public boolean update(User pet) {
 		return jdbi.withHandle(handle -> {
-			return handle.createUpdate("UPDATE user SET name=:name WHERE id=:id")
-				.bind("id", pet.getId())
-				.bind("name", pet.getName())
-				.execute();
+			Update update = handle.createUpdate("UPDATE user SET name=:name WHERE id=:id");
+			bind(update, pet);
+			return update.execute();
 		}) == 1;
+	}
+
+	private void bind(Update update, User pet) {
+		update.bind("id", pet.getId());
+		update.bind("name", pet.getName());
 	}
 
 	@Override
 	public boolean delete(long id) {
 		return jdbi.withHandle(handle -> {
-			return handle.createUpdate("DELETE user WHERE id=:id")
-				.bind("id", id)
-				.execute();
+			return handle.createUpdate("DELETE user WHERE id=:id").bind("id", id).execute();
 		}) == 1;
 	}
 
