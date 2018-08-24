@@ -23,24 +23,23 @@ public class UserJdbcRepositoryBuilder {
 
 	String clazz;
 
-	String targetClazz;
+	String clazzTarget;
 
-	String mapClazz;
+	String clazzRowMapper;
 
 	public byte[] make(String clazz, String clazzTarget, String clazzRowMapper) throws IOException {
 
 		this.clazz = clazz;
-		this.targetClazz = clazzTarget;
-		this.mapClazz = clazzRowMapper;
+		this.clazzTarget = clazzTarget;
+		this.clazzRowMapper = clazzRowMapper;
 
-		String idName = "id";
 		Class<Long> clazzID = long.class;
 
 		cw = ClassBuilder.make(clazz).imPlements(JdbcRepository.class, clazzTarget).body();
 
 		cw.field(ACC_PRIVATE, "conn", Connection.class);
 
-		cw.field(ACC_PRIVATE, "mapper", this.mapClazz);
+		cw.field(ACC_PRIVATE, "mapper", this.clazzRowMapper);
 
 		init();
 
@@ -56,31 +55,16 @@ public class UserJdbcRepositoryBuilder {
 
 		deleteJdbc(clazzID);
 
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "findByIdJdbc")
-			.parameter("id", clazzID)
-			.reTurn(Object.class)
-			.tHrow(SQLException.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD("this");
-				mv.LOAD("id");
-				mv.VIRTUAL(this.clazz, "findByIdJdbc").parameter(clazzID).reTurn(this.targetClazz).INVOKE();
-				mv.RETURNTop();
-			});
+		findByIdJdbcBridge(clazzID);
 
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "updateJdbc")
-			.parameter("data", Object.class)
-			.reTurn(boolean.class)
-			.tHrow(SQLException.class)/* new String[] { "java.sql.SQLException" } */
-			.code(mv -> {
-				mv.line();
-				mv.LOAD("this");
-				mv.LOAD("data");
-				mv.CHECKCAST(this.targetClazz);
-				mv.VIRTUAL(this.clazz, "updateJdbc").parameter(this.targetClazz).reTurn(boolean.class).INVOKE();
-				mv.RETURNTop();
-			});
+		updateJdbcBridge();
 
+		insertJdbcBridge();
+
+		return cw.end().toByteArray();
+	}
+
+	private void insertJdbcBridge() {
 		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "insertJdbc")
 			.parameter("data", Object.class)
 			.reTurn(boolean.class)
@@ -89,12 +73,39 @@ public class UserJdbcRepositoryBuilder {
 				mv.line();
 				mv.LOAD("this");
 				mv.LOAD("data");
-				mv.CHECKCAST(this.targetClazz);
-				mv.VIRTUAL(this.clazz, "insertJdbc").parameter(this.targetClazz).reTurn(boolean.class).INVOKE();
+				mv.CHECKCAST(this.clazzTarget);
+				mv.VIRTUAL(this.clazz, "insertJdbc").parameter(this.clazzTarget).reTurn(boolean.class).INVOKE();
 				mv.RETURNTop();
 			});
+	}
 
-		return cw.end().toByteArray();
+	private void updateJdbcBridge() {
+		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "updateJdbc")
+			.parameter("data", Object.class)
+			.reTurn(boolean.class)
+			.tHrow(SQLException.class)/* new String[] { "java.sql.SQLException" } */
+			.code(mv -> {
+				mv.line();
+				mv.LOAD("this");
+				mv.LOAD("data");
+				mv.CHECKCAST(this.clazzTarget);
+				mv.VIRTUAL(this.clazz, "updateJdbc").parameter(this.clazzTarget).reTurn(boolean.class).INVOKE();
+				mv.RETURNTop();
+			});
+	}
+
+	private void findByIdJdbcBridge(Class<Long> clazzID) {
+		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "findByIdJdbc")
+			.parameter("id", clazzID)
+			.reTurn(Object.class)
+			.tHrow(SQLException.class)
+			.code(mv -> {
+				mv.line();
+				mv.LOAD("this");
+				mv.LOAD("id");
+				mv.VIRTUAL(this.clazz, "findByIdJdbc").parameter(clazzID).reTurn(this.clazzTarget).INVOKE();
+				mv.RETURNTop();
+			});
 	}
 
 	private void deleteJdbc(Class<Long> clazzID) {
@@ -133,7 +144,7 @@ public class UserJdbcRepositoryBuilder {
 
 	private void updateJdbc(Class<Long> clazzID) {
 		cw.method(ACC_PUBLIC, "updateJdbc")
-			.parameter("data", this.targetClazz)
+			.parameter("data", this.clazzTarget)
 			.reTurn(boolean.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
@@ -154,7 +165,7 @@ public class UserJdbcRepositoryBuilder {
 					mv.LOAD("preparedStatement");
 					mv.LOADConst(3);
 					mv.LOAD("data");
-					mv.VIRTUAL(this.targetClazz, "getId").reTurn(clazzID).INVOKE();
+					mv.VIRTUAL(this.clazzTarget, "getId").reTurn(clazzID).INVOKE();
 					mv.INTERFACE(PreparedStatement.class, "setLong").parameter(int.class, clazzID).INVOKE();
 				}
 				{
@@ -162,7 +173,7 @@ public class UserJdbcRepositoryBuilder {
 					mv.LOAD("preparedStatement");
 					mv.LOADConst(1);
 					mv.LOAD("data");
-					mv.VIRTUAL(this.targetClazz, "getName").reTurn(String.class).INVOKE();
+					mv.VIRTUAL(this.clazzTarget, "getName").reTurn(String.class).INVOKE();
 					mv.INTERFACE(PreparedStatement.class, "setString").parameter(int.class, String.class).INVOKE();
 				}
 				{
@@ -170,7 +181,7 @@ public class UserJdbcRepositoryBuilder {
 					mv.LOAD("preparedStatement");
 					mv.LOADConst(2);
 					mv.LOAD("data");
-					mv.VIRTUAL(this.targetClazz, "getDescription").reTurn(String.class).INVOKE();
+					mv.VIRTUAL(this.clazzTarget, "getDescription").reTurn(String.class).INVOKE();
 					mv.INTERFACE(PreparedStatement.class, "setString").parameter(int.class, String.class).INVOKE();
 				}
 				{
@@ -184,7 +195,7 @@ public class UserJdbcRepositoryBuilder {
 
 	private void insertJdbc(Class<Long> clazzID) {
 		cw.method(ACC_PUBLIC, "insertJdbc")
-			.parameter("data", this.targetClazz)
+			.parameter("data", this.clazzTarget)
 			.reTurn(boolean.class)
 			.tHrow(SQLException.class)/* new String[] { "java.sql.SQLException" } */
 			.code(mv -> {
@@ -205,7 +216,7 @@ public class UserJdbcRepositoryBuilder {
 					mv.LOAD("preparedStatement");
 					mv.LOADConst(1);
 					mv.LOAD("data");
-					mv.VIRTUAL(this.targetClazz, "getId").reTurn(clazzID).INVOKE();
+					mv.VIRTUAL(this.clazzTarget, "getId").reTurn(clazzID).INVOKE();
 					mv.INTERFACE(PreparedStatement.class, "setLong").parameter(int.class, clazzID).INVOKE();
 				}
 				{
@@ -213,7 +224,7 @@ public class UserJdbcRepositoryBuilder {
 					mv.LOAD("preparedStatement");
 					mv.LOADConst(2);
 					mv.LOAD("data");
-					mv.VIRTUAL(this.targetClazz, "getName").reTurn(String.class).INVOKE();
+					mv.VIRTUAL(this.clazzTarget, "getName").reTurn(String.class).INVOKE();
 					mv.INTERFACE(PreparedStatement.class, "setString").parameter(int.class, String.class).INVOKE();
 				}
 				{
@@ -221,7 +232,7 @@ public class UserJdbcRepositoryBuilder {
 					mv.LOAD("preparedStatement");
 					mv.LOADConst(3);
 					mv.LOAD("data");
-					mv.VIRTUAL(this.targetClazz, "getDescription").reTurn(String.class).INVOKE();
+					mv.VIRTUAL(this.clazzTarget, "getDescription").reTurn(String.class).INVOKE();
 					mv.INTERFACE(PreparedStatement.class, "setString").parameter(int.class, String.class).INVOKE();
 				}
 				{
@@ -236,7 +247,7 @@ public class UserJdbcRepositoryBuilder {
 	private void findByIdJdbc(String clazzTarget, Class<Long> clazzID) {
 		cw.method(ACC_PUBLIC, "findByIdJdbc")
 			.parameter("id", clazzID)
-			.reTurn(this.targetClazz)
+			.reTurn(this.clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
@@ -283,9 +294,9 @@ public class UserJdbcRepositoryBuilder {
 					mv.line();
 					mv.LOAD("datas");
 					mv.LOAD("this");
-					mv.GETFIELD("mapper", this.mapClazz);
+					mv.GETFIELD("mapper", this.clazzRowMapper);
 					mv.LOAD("resultSet");
-					mv.VIRTUAL(this.mapClazz, "map").parameter(ResultSet.class).reTurn(this.targetClazz).INVOKE();
+					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
 					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
 					mv.POP();
 				}
@@ -302,7 +313,7 @@ public class UserJdbcRepositoryBuilder {
 					mv.LOAD("datas");
 					mv.LOADConst(0);
 					mv.INTERFACE(List.class, "get").parameter(int.class).reTurn(Object.class).INVOKE();
-					mv.CHECKCAST(this.targetClazz);
+					mv.CHECKCAST(this.clazzTarget);
 					mv.RETURNTop();
 				}
 			});
@@ -346,9 +357,9 @@ public class UserJdbcRepositoryBuilder {
 					mv.line();
 					mv.LOAD("datas");
 					mv.LOAD("this");
-					mv.GETFIELD("mapper", this.mapClazz);
+					mv.GETFIELD("mapper", this.clazzRowMapper);
 					mv.LOAD("resultSet");
-					mv.VIRTUAL(this.mapClazz, "map").parameter(ResultSet.class).reTurn(this.targetClazz).INVOKE();
+					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
 					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
 					mv.POP();
 				}
@@ -391,10 +402,10 @@ public class UserJdbcRepositoryBuilder {
 			{
 				mv.line();
 				mv.LOAD("this");
-				mv.NEW(this.mapClazz);
+				mv.NEW(this.clazzRowMapper);
 				mv.DUP();
-				mv.SPECIAL(this.mapClazz, "<init>").INVOKE();
-				mv.PUTFIELD("mapper", this.mapClazz);
+				mv.SPECIAL(this.clazzRowMapper, "<init>").INVOKE();
+				mv.PUTFIELD("mapper", this.clazzRowMapper);
 			}
 			{
 				mv.line();
