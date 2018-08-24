@@ -58,8 +58,9 @@ public class UserJdbcRepositoryTest2 extends TestBase {
 
 		Connection connection = jdbi.open().getConnection();
 		// 利用反射创建对象
-		Repository<User> userRepository = new UserJdbcRepository().setConnection(connection);
-
+		JdbcRepository<User> userRepository = new UserJdbcRepository();
+		userRepository.setConnection(connection);
+		
 		jdbi.useHandle(handle -> {
 			handle.execute("CREATE TABLE user (id INTEGER PRIMARY KEY, name VARCHAR ,description VARCHAR)");
 			handle.commit();

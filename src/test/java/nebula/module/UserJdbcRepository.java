@@ -12,9 +12,8 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 	private UserJdbcRowMapper mapper = new UserJdbcRowMapper();
 
 	@Override
-	public UserJdbcRepository setConnection(Connection conn) {
+	public void setConnection(Connection conn) {
 		this.conn = conn;
-		return this;
 	}
 
 	@Override

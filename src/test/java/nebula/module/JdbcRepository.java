@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface JdbcRepository<T> extends Repository<T> {
-	JdbcRepository<T> setConnection(Connection conn);
+	void setConnection(Connection conn);
 
 	@Override
 	default List<T> list(int start, int max) {
