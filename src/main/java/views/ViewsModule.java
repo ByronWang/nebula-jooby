@@ -21,7 +21,7 @@ import com.typesafe.config.Config;
 import nebula.module.dbTable.DbColumn;
 import nebula.module.dbTable.DbTable;
 import nebula.module.dbTable.DbTableFat;
-import nebula.module.definedTables.DefinedColumn;
+import nebula.module.definedTables.ColumnDefinition;
 import nebula.module.definedTables.DefinedTable;
 
 public class ViewsModule implements Jooby.Module {

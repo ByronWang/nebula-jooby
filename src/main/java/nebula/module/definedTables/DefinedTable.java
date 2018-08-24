@@ -4,13 +4,13 @@ import java.util.List;
 
 public class DefinedTable extends DefinedTableThin {
 
-	private List<DefinedColumn> columns;
+	private List<ColumnDefinition> columns;
 
-	public List<DefinedColumn> getColumns() {
+	public List<ColumnDefinition> getColumns() {
 		return columns;
 	}
 
-	public DefinedTable(String name, List<DefinedColumn> columns) {
+	public DefinedTable(String name, List<ColumnDefinition> columns) {
 		super(name);
 		this.columns = columns;
 	}

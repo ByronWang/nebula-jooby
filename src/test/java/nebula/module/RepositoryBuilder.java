@@ -6,7 +6,6 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
@@ -21,12 +20,13 @@ import org.jdbi.v3.core.statement.Update;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 
+import nebula.module.RepositoryFactory.FieldMapper;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.GenericClazz;
 import nebula.tinyasm.data.MethodCode;
 
-public class UserRepositoryBuilder {
+public class RepositoryBuilder {
 
 	ClassBody cw;
 
@@ -67,7 +67,7 @@ public class UserRepositoryBuilder {
 		}
 	}
 
-	public byte[] make(String clazz, String targetClazz, String mapClazz) throws IOException {
+	public byte[] make(String clazz, String targetClazz, String mapClazz, List<FieldMapper> maps) {
 
 		this.clazz = clazz;
 		this.targetClazz = targetClazz;
@@ -80,7 +80,7 @@ public class UserRepositoryBuilder {
 
 		cw.referInnerClass(ACC_PUBLIC + ACC_FINAL + ACC_STATIC, MethodHandles.class.getName(), "Lookup");
 		cw.field(0, "jdbi", Jdbi.class);
-		cw.field(ACC_STATIC, "mapper", UserMapper.class);
+		cw.field(ACC_STATIC, "mapper", mapClazz);
 
 		make_clinit(clazz, mapClazz);
 		make_init();

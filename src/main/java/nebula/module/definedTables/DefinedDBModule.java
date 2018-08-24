@@ -94,8 +94,8 @@ public class DefinedDBModule implements Jooby.Module {
 
 				Jdbi jdbi = req.require(Jdbi.class);
 
-				List<DefinedColumn> columns = jdbi.withHandle(h -> {
-					List<DefinedColumn> rowColumns = new ArrayList<>();
+				List<ColumnDefinition> columns = jdbi.withHandle(h -> {
+					List<ColumnDefinition> rowColumns = new ArrayList<>();
 					Connection c = h.getConnection();
 					try (ResultSet rs = c.getMetaData().getColumns(null, null, tableName, null)) {
 
@@ -110,7 +110,7 @@ public class DefinedDBModule implements Jooby.Module {
 							log.info(columnName + " " + datatype + " " + typeName + "(" + columnsize + (decimaldigits>0?"."+ decimaldigits:"") + ")"
 											 + " " + (isNullable?"Nullable":"") + " " +  (isAutoIncrment?"AutoIncrment":"") + ";" );
 
-							DefinedColumn column = new DefinedColumn(columnName, datatype, typeName, columnsize, decimaldigits,
+							ColumnDefinition column = new ColumnDefinition(columnName, datatype, typeName, columnsize, decimaldigits,
 									isNullable, isAutoIncrment);
 							rowColumns.add(column);
 						}
