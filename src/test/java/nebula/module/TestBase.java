@@ -12,8 +12,22 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
+import nebula.module.TestBase.MyClassLoader;
+
 public class TestBase {
 
+	MyClassLoader classLoader = new MyClassLoader();
+	class MyClassLoader extends ClassLoader {
+		public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
+			Class<?> clazz = super.defineClass(name, b, off, len);
+			return clazz;
+		}
+		public Class<?> defineClassByName(String name, byte[] b) {
+			Class<?> clazz = super.defineClass(name, b, 0, b.length);
+			return clazz;
+		}
+	}
+	
 	public static String toString(byte[] code) {
 		try {
 			ClassReader cr = new ClassReader(code);

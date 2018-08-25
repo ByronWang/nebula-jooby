@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import nebula.jdbc.builders.schema.JDBCConfiguration;
-import nebula.jdbc.builders.schema.JDBCConfiguration.JavaType;
+import nebula.jdbc.builders.schema.JDBCConfiguration.JDBCType;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.MethodCode;
@@ -28,11 +28,11 @@ public class JdbcRowMapperBuilder {
 				Class<?>[] clazzes = new Class<?>[maps.size()];
 				for (int i = 0; i < maps.size(); i++) {
 					FieldMapper fieldMapper = maps.get(i);
-					String name = fieldMapper.pojoName;
-					JavaType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoType);
+					String name = fieldMapper.fieldName;
+					JDBCType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz.getName());
 					String getname = javatype.getname;
-					Class<?> jdbcClass = javatype.getclazz;
-					clazzes[i] = javatype.getclazz;
+					Class<?> jdbcClass = javatype.clazz;
+					clazzes[i] = javatype.clazz;
 
 					map(mv, name, getname, jdbcClass, jdbcClass);
 				}

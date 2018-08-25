@@ -85,14 +85,24 @@ public class RepositoryFactory {
 		List<FieldMapper> mappers = new ArrayList<>();
 
 		for (Field field : type.getDeclaredFields()) {
-			String name = field.getName();
-			String fieldType = field.getType().getName();
-			JDBCTypes jdbctype = JDBCConfiguration.mapperRevert.get(fieldType);
-			ColumnDefination column = ColumnFactory.Column(jdbctype, name);
-			FieldMapper mapper = new FieldMapper(name, fieldType, column);
+			String fieldname = field.getName();
+			Class<?> fieldClazz = field.getType();
+			JDBCTypes jdbctype = JDBCConfiguration.mapperRevert.get(fieldClazz.getName());
+			ColumnDefination column = ColumnFactory.Column(jdbctype, fieldname);
+			String getname = getGetName(field.getName(), field.getType());
+			boolean primaryKey = "id".equals(fieldname);
+			FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column);
 			mappers.add(mapper);
 		}
 		return mappers;
+	}
+
+	public String getGetName(String fieldname, Class<?> clazz) {
+		if (clazz == boolean.class) {
+			return "is" + Character.toUpperCase(fieldname.charAt(0)) + fieldname.substring(1);
+		} else {
+			return "get" + Character.toUpperCase(fieldname.charAt(0)) + fieldname.substring(1);
+		}
 	}
 
 	public JdbcRowMapperBuilder rowMapperBuilder = new JdbcRowMapperBuilder();

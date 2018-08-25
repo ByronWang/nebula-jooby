@@ -12,7 +12,7 @@ import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 
 import nebula.jdbc.builders.schema.JDBCConfiguration;
-import nebula.jdbc.builders.schema.JDBCConfiguration.JavaType;
+import nebula.jdbc.builders.schema.JDBCConfiguration.JDBCType;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.MethodCode;
@@ -36,11 +36,11 @@ public class RowMapperBuilder {
 					Class<?>[] clazzes = new Class<?>[maps.size()];
 					for (int i = 0; i < maps.size(); i++) {
 						FieldMapper fieldMapper = maps.get(i);
-						String name = fieldMapper.pojoName;
-						JavaType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoType);
+						String name = fieldMapper.fieldName;
+						JDBCType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz);
 						String getname = javatype.getname;
-						Class<?> jdbcClass = javatype.getclazz;
-						clazzes[i] = javatype.getclazz;
+						Class<?> jdbcClass = javatype.clazz;
+						clazzes[i] = javatype.clazz;
 
 						map(mv, name, getname, jdbcClass, jdbcClass);
 					}

@@ -1,37 +1,44 @@
 package nebula.module;
 
 import static org.junit.Assert.assertEquals;
-import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.mapper.RowMapper;
-import org.jdbi.v3.core.statement.StatementContext;
-import org.jooby.Results;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import nebula.tinyasm.ClassBuilder;
-import nebula.tinyasm.data.ClassBody;
-import nebula.tinyasm.util.RefineCode;
+import nebula.jdbc.builders.schema.ColumnDefination;
+import nebula.jdbc.builders.schema.JDBCTypes;
 
 public class JdbcRepositoryBuilderTest extends TestBase {
 	Jdbi jdbi;
+
+	String clazz;
+	List<FieldMapper> maps;
+	JdbcRowMapperBuilder jdbcRowMapperBuilder;
+
+	JdbcRepositoryBuilder jdbcRepositoryBuilder;
 
 	@Before
 	public void before() {
 		jdbi = Jdbi.create("jdbc:h2:mem:test"); // (H2 in-memory database)
 		jdbi.open();
+		classLoader = new MyClassLoader();
+		jdbcRowMapperBuilder = new JdbcRowMapperBuilder();
+		jdbcRepositoryBuilder = new JdbcRepositoryBuilder();
+		maps = new ArrayList<FieldMapper>();
+		clazz = UserJdbcRowMapper.class.getName();
+		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefination("id", JDBCTypes.INTEGER)));
+		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefination("name", JDBCTypes.VARCHAR)));
+		maps.add(new FieldMapper("description", "getDescription", String.class,
+				new ColumnDefination("description", JDBCTypes.VARCHAR)));
+
 	}
 
 	@After
@@ -43,60 +50,68 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 //		System.out.println(RefineCode.refineCode(toString(UserJdbcRowMapper.class),ResultSet.class,PreparedStatement.class,JdbcRepository.class));
 //	}
 
-	class MyClassLoader extends ClassLoader {
-		public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
-			Class<?> clazz = super.defineClass(name, b, off, len);
-			return clazz;
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testConstructerEmpty() throws IOException, InstantiationException, IllegalAccessException,
-			NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
+	public void testUser() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException,
+			SecurityException, IllegalArgumentException, InvocationTargetException {
 
-		String clazz = "ThisRepository";
-		String targetClazz = User.class.getName();
-		String mapClazz = "nebula.module.UserMapper";
-
+		String clazzTarget = User.class.getName();
+		String clazzRowMapper = UserJdbcRowMapper.class.getName() + "testUser";
 		Connection connection = jdbi.open().getConnection();
+
+		byte[] codeRowMapper = jdbcRowMapperBuilder.make(clazzRowMapper, clazzTarget, maps);
+		@SuppressWarnings("unused")
+		Class<JdbcRowMapper<User>> clazzJdbcRowMapper = (Class<JdbcRowMapper<User>>) classLoader
+			.defineClassByName(clazzRowMapper, codeRowMapper);
+		byte[] codeRepository = jdbcRepositoryBuilder.make(clazz, clazzTarget, clazzRowMapper, maps);
+		Class<JdbcRepository<User>> clazzJdbcRepository = (Class<JdbcRepository<User>>) classLoader
+			.defineClassByName(this.clazz, codeRepository);
+
 		// 利用反射创建对象
-		Repository<User> userRepository = new RepositoryFactory(connection).getRepository(User.class);
-		((JdbcRepository<User>)userRepository).setConnection(connection);
+		JdbcRepository<User> userRepository = clazzJdbcRepository.newInstance();
+		userRepository.setConnection(connection);
 
 		jdbi.useHandle(handle -> {
 			handle.execute("CREATE TABLE user (id INTEGER PRIMARY KEY, name VARCHAR ,description VARCHAR)");
 			handle.commit();
 		});
-//
-////		UserRepository userRepository = new UserRepository(jdbi);
-//		UserRepository userRepository = RepositoryFactory.getRepository(User.class);
+
 		List<User> users1 = userRepository.list(0, 0);
 
-		User a = new User(0, "wangshilian", "desctiption0");
-		User b = new User(2, "lixiang", "desctiption2");
+		User a = new User(10, "name_a10", "description_a10");
+		User b = new User(20, "name_b20", "description_b20");
+		{
+			userRepository.insert(a);
+			users1 = userRepository.list(0, 0);
+			assertEquals("[User [id=10, name=name_a10, description=description_a10]]", users1.toString());
+		}
+		{
+			userRepository.insert(b);
+			users1 = userRepository.list(0, 0);
+			System.out.println(users1);
+			assertEquals(
+					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
+					users1.toString());
+		}
+		{
+			User b2 = new User(20, "name_b20_new", "description_b20_new");
+			userRepository.update(b2);
 
-		userRepository.insert(a);
-
-		users1 = userRepository.list(0, 0);
-		System.out.println(users1);
-
-		userRepository.insert(b);
-
-		users1 = userRepository.list(0, 0);
-		System.out.println(users1);
-
-		User b2 = new User(2, "lixiang_new_name", "desctiption");
-		userRepository.update(b2);
-
-		users1 = userRepository.list(0, 0);
-		System.out.println(users1);
-		userRepository.delete(a.getId());
-
-		users1 = userRepository.list(0, 0);
-		System.out.println(users1);
-
-		System.out.println(userRepository.getClass().getName());
+			users1 = userRepository.list(0, 0);
+			assertEquals(
+					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20_new, description=description_b20_new]]",
+					users1.toString());
+		}
+		{
+			userRepository.delete(a.getId());
+			users1 = userRepository.list(0, 0);
+			assertEquals("[User [id=20, name=name_b20_new, description=description_b20_new]]", users1.toString());
+		}
+		{
+			userRepository.delete(b.getId());
+			users1 = userRepository.list(0, 0);
+			assertEquals("[]", users1.toString());
+		}
 	}
 
 	@Test
@@ -107,7 +122,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		String mapClazz = UserJdbcRowMapper.class.getName();
 
 		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder();
-		byte[] code = builder.make(clazz, targetClazz, mapClazz, null);
+		byte[] code = builder.make(clazz, targetClazz, mapClazz, maps);
 
 		String codeActual = toString(code);
 		String codeExpected = toString(clazz);

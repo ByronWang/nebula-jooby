@@ -1,7 +1,8 @@
 package nebula.module;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -32,9 +33,10 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 		builder = new JdbcRowMapperBuilder();
 		maps = new ArrayList<FieldMapper>();
 		clazz = UserJdbcRowMapper.class.getName();
-		maps.add(new FieldMapper("id", long.class, new ColumnDefination("id", JDBCTypes.INTEGER)));
-		maps.add(new FieldMapper("name", String.class, new ColumnDefination("name", JDBCTypes.VARCHAR)));
-		maps.add(new FieldMapper("description", String.class, new ColumnDefination("description", JDBCTypes.VARCHAR)));
+		maps.add(new FieldMapper("id", "getId", long.class, new ColumnDefination("id", JDBCTypes.INTEGER)));
+		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefination("name", JDBCTypes.VARCHAR)));
+		maps.add(new FieldMapper("description", "getDescription", String.class,
+				new ColumnDefination("description", JDBCTypes.VARCHAR)));
 	}
 
 	@After
@@ -64,13 +66,12 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 			throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException,
 			SecurityException, IllegalArgumentException, InvocationTargetException, SQLException {
 
-		String targetClazz = User.class.getName();
-
 		ResultSet resultSet = mock(ResultSet.class);
 		when(resultSet.getLong("id")).thenReturn(1047L);
 		when(resultSet.getString("name")).thenReturn("TestName1047");
 		when(resultSet.getString("description")).thenReturn("TestDescription1047");
 
+		String targetClazz = User.class.getName();
 		byte[] code = builder.make(clazz, targetClazz, maps);
 		Class<JdbcRowMapper<User>> row = (Class<JdbcRowMapper<User>>) classLoader.defineClassByName(this.clazz, code);
 		JdbcRowMapper<User> mapper = row.newInstance();

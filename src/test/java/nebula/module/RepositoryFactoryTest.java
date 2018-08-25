@@ -1,5 +1,7 @@
 package nebula.module;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Connection;
 import java.util.List;
 
@@ -44,30 +46,40 @@ public class RepositoryFactoryTest extends TestBase {
 
 		List<User> users1 = userRepository.list(0, 0);
 
-		User userFirst = new User(0, "wangshilian", "desctiption0");
-		User userSecond = new User(2, "lixiang", "desctiption2");
+		User a = new User(10, "name_a10", "description_a10");
+		User b = new User(20, "name_b20", "description_b20");
+		{
+			userRepository.insert(a);
+			users1 = userRepository.list(0, 0);
+			assertEquals("[User [id=10, name=name_a10, description=description_a10]]", users1.toString());
+		}
+		{
+			userRepository.insert(b);
+			users1 = userRepository.list(0, 0);
+			System.out.println(users1);
+			assertEquals(
+					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
+					users1.toString());
+		}
+		{
+			User b2 = new User(20, "name_b20_new", "description_b20_new");
+			userRepository.update(b2);
 
-		userRepository.insert(userFirst);
-
-		users1 = userRepository.list(0, 0);
-		System.out.println(users1);
-
-		userRepository.insert(userSecond);
-
-		users1 = userRepository.list(0, 0);
-		System.out.println(users1);
-
-		User b2 = new User(2, "lixiang_new_name", "desctiption");
-		userRepository.update(b2);
-
-		users1 = userRepository.list(0, 0);
-		System.out.println(users1);
-		userRepository.delete(userFirst.getId());
-
-		users1 = userRepository.list(0, 0);
-		System.out.println(users1);
-
-		System.out.println(userRepository.getClass().getName());
+			users1 = userRepository.list(0, 0);
+			assertEquals(
+					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20_new, description=description_b20_new]]",
+					users1.toString());
+		}
+		{
+			userRepository.delete(a.getId());
+			users1 = userRepository.list(0, 0);
+			assertEquals("[User [id=20, name=name_b20_new, description=description_b20_new]]", users1.toString());
+		}
+		{
+			userRepository.delete(b.getId());
+			users1 = userRepository.list(0, 0);
+			assertEquals("[]", users1.toString());
+		}
 	}
 
 	@Test

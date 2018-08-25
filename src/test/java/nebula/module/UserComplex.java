@@ -21,6 +21,62 @@ public class UserComplex {
 	private Timestamp timestamp;
 	private String string;
 
+	public long getId() {
+		return id;
+	}
+
+	public byte getB() {
+		return b;
+	}
+
+	public char getC() {
+		return c;
+	}
+
+	public short getS() {
+		return s;
+	}
+
+	public int getI() {
+		return i;
+	}
+
+	public long getL() {
+		return l;
+	}
+
+	public boolean isZ() {
+		return z;
+	}
+
+	public float getF() {
+		return f;
+	}
+
+	public double getD() {
+		return d;
+	}
+
+	public BigDecimal getBigDecimal() {
+		return bigDecimal;
+	}
+
+	public Time getTime() {
+		return time;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public Timestamp getTimestamp() {
+		return timestamp;
+	}
+
+	public String getString() {
+		return string;
+	}
+
 	public UserComplex(long id, byte b, char c, short s, int i, long l, boolean z, float f, double d,
 			BigDecimal bigDecimal, Time time, Date date, Timestamp timestamp, String string) {
 		super();
