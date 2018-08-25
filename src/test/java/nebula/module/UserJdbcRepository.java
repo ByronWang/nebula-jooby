@@ -10,17 +10,24 @@ import java.util.List;
 public class UserJdbcRepository implements JdbcRepository<User> {
 	private Connection conn;
 	private UserJdbcRowMapper mapper = new UserJdbcRowMapper();
-
+	
 	@Override
 	public void setConnection(Connection conn) {
 		this.conn = conn;
 	}
 
 	@Override
+	public void initJdbc() throws SQLException {
+		PreparedStatement preparedStatement = conn.prepareStatement("CREATE TABLE user(id INT PRIMARY KEY,name VARCHAR,description VARCHAR)");
+
+		preparedStatement.execute();
+	}
+
+	@Override
 	public List<User> listJdbc(int start, int max) throws SQLException {
 		List<User> datas = new ArrayList<>();
 
-		ResultSet resultSet = conn.prepareStatement("SELECT * FROM user").executeQuery();
+		ResultSet resultSet = conn.prepareStatement("SELECT id,name,description FROM user").executeQuery();
 		while (resultSet.next()) {
 			datas.add(mapper.map(resultSet));
 		}
@@ -33,7 +40,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet;
 		List<User> datas;
 		datas = new ArrayList<>();
-		preparedStatement = conn.prepareStatement("SELECT * FROM user ORDER BY name WHERE id=?");
+		preparedStatement = conn.prepareStatement("SELECT id,name,description FROM user WHERE id=?");
 
 		preparedStatement.setLong(1, id);
 
@@ -69,8 +76,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public boolean deleteJdbc(long id) throws SQLException {
-		PreparedStatement preparedStatement;
-		preparedStatement = conn.prepareStatement("DELETE user WHERE id=?");
+		PreparedStatement preparedStatement = conn.prepareStatement("DELETE user WHERE id=?");
 
 		preparedStatement.setLong(1, id);
 

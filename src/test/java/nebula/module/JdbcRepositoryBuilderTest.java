@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import org.junit.Test;
 
 import nebula.jdbc.builders.schema.ColumnDefination;
 import nebula.jdbc.builders.schema.JDBCTypes;
+import nebula.tinyasm.util.RefineCode;
 
 public class JdbcRepositoryBuilderTest extends TestBase {
 	Jdbi jdbi;
@@ -45,10 +48,11 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 	public void after() {
 	}
 
-//	@Test
-//	public void testPrint() throws IOException {
-//		System.out.println(RefineCode.refineCode(toString(UserJdbcRowMapper.class),ResultSet.class,PreparedStatement.class,JdbcRepository.class));
-//	}
+	@Test
+	public void testPrint() throws IOException {
+		System.out.println(RefineCode.refineCode(toString(UserJdbcRepository.class), ResultSet.class,
+				PreparedStatement.class, JdbcRepository.class));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -63,7 +67,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		@SuppressWarnings("unused")
 		Class<JdbcRowMapper<User>> clazzJdbcRowMapper = (Class<JdbcRowMapper<User>>) classLoader
 			.defineClassByName(clazzRowMapper, codeRowMapper);
-		byte[] codeRepository = jdbcRepositoryBuilder.make(clazz, clazzTarget, clazzRowMapper, maps);
+		byte[] codeRepository = jdbcRepositoryBuilder.make(clazz, clazzTarget, clazzRowMapper, "user", maps);
 		Class<JdbcRepository<User>> clazzJdbcRepository = (Class<JdbcRepository<User>>) classLoader
 			.defineClassByName(this.clazz, codeRepository);
 
@@ -122,7 +126,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		String mapClazz = UserJdbcRowMapper.class.getName();
 
 		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder();
-		byte[] code = builder.make(clazz, targetClazz, mapClazz, maps);
+		byte[] code = builder.make(clazz, targetClazz, mapClazz, "user", maps);
 
 		String codeActual = toString(code);
 		String codeExpected = toString(clazz);

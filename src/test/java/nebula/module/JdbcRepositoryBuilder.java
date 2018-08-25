@@ -31,7 +31,8 @@ public class JdbcRepositoryBuilder {
 
 	String clazzRowMapper;
 
-	public byte[] make(String clazz, String clazzTarget, String clazzRowMapper, List<FieldMapper> mappers) {
+	public byte[] make(String clazz, String clazzTarget, String clazzRowMapper, String tablename,
+			List<FieldMapper> mappers) {
 
 		this.clazz = clazz;
 		this.clazzTarget = clazzTarget;
@@ -45,17 +46,19 @@ public class JdbcRepositoryBuilder {
 
 		cw.field(ACC_PRIVATE, "mapper", this.clazzRowMapper);
 
-		init();
+		constructor();
 
 		setConnection();
 
-		listJdbc(clazzTarget);
+		initJdbc(tablename, mappers);
 
-		findByIdJdbc(clazzTarget, clazzID);
+		listJdbc(clazzTarget, mappers, tablename);
 
-		insertJdbc(mappers, "user");
+		findByIdJdbc(clazzTarget, clazzID, mappers);
 
-		updateJdbc(mappers, "user");
+		insertJdbc(mappers, tablename);
+
+		updateJdbc(mappers, tablename);
 
 		deleteJdbc(clazzID);
 
@@ -68,62 +71,197 @@ public class JdbcRepositoryBuilder {
 		return cw.end().toByteArray();
 	}
 
-	private void insertJdbcBridge() {
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "insertJdbc")
-			.parameter("data", Object.class)
-			.reTurn(boolean.class)
-			.tHrow(SQLException.class)
-			.code(mv -> {
+	private void constructor() {
+		cw.method(ACC_PUBLIC, "<init>").code(mv -> {
+			{
 				mv.line();
 				mv.LOAD("this");
-				mv.LOAD("data");
-				mv.CHECKCAST(this.clazzTarget);
-				mv.VIRTUAL(this.clazz, "insertJdbc").parameter(this.clazzTarget).reTurn(boolean.class).INVOKE();
-				mv.RETURNTop();
-			});
-	}
-
-	private void updateJdbcBridge() {
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "updateJdbc")
-			.parameter("data", Object.class)
-			.reTurn(boolean.class)
-			.tHrow(SQLException.class)
-			.code(mv -> {
+				mv.SPECIAL(Object.class, "<init>").INVOKE();
+			}
+			{
 				mv.line();
 				mv.LOAD("this");
-				mv.LOAD("data");
-				mv.CHECKCAST(this.clazzTarget);
-				mv.VIRTUAL(this.clazz, "updateJdbc").parameter(this.clazzTarget).reTurn(boolean.class).INVOKE();
-				mv.RETURNTop();
-			});
+				mv.NEW(this.clazzRowMapper);
+				mv.DUP();
+				mv.SPECIAL(this.clazzRowMapper, "<init>").INVOKE();
+				mv.PUTFIELD("mapper", this.clazzRowMapper);
+			}
+			{
+				mv.line();
+				mv.RETURN();
+			}
+		});
 	}
 
-	private void findByIdJdbcBridge(Class<Long> clazzID) {
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "findByIdJdbc")
-			.parameter("id", clazzID)
-			.reTurn(Object.class)
-			.tHrow(SQLException.class)
-			.code(mv -> {
+	private void setConnection() {
+		cw.method(ACC_PUBLIC, "setConnection").parameter("conn", Connection.class).code(mv -> {
+			{
 				mv.line();
 				mv.LOAD("this");
-				mv.LOAD("id");
-				mv.VIRTUAL(this.clazz, "findByIdJdbc").parameter(clazzID).reTurn(this.clazzTarget).INVOKE();
-				mv.RETURNTop();
-			});
+				mv.LOAD("conn");
+				mv.PUTFIELD("conn", Connection.class);
+				mv.line();
+				mv.RETURN();
+			}
+		});
 	}
 
-	private void deleteJdbc(Class<Long> clazzID) {
-		cw.method(ACC_PUBLIC, "deleteJdbc")
-			.parameter("id", clazzID)
-			.reTurn(boolean.class)
+	private void initJdbc(String tablename, List<FieldMapper> mappers) {
+		cw.method("initJdbc").tHrow(SQLException.class).code(mv -> {
+			mv.define("preparedStatement", PreparedStatement.class);
+			{
+
+				StringBuilder sb = new StringBuilder();
+
+				List<String> columns = new ArrayList<>();
+
+				for (FieldMapper fieldMapper : mappers) {
+					columns.add(fieldMapper.column.toSQL());
+				}
+
+				sb.append("CREATE TABLE ").append(tablename).append("(").append(String.join(",", columns)).append(")");
+
+				String sql = sb.toString();
+
+				mv.line();
+				mv.LOAD(0);
+				mv.GETFIELD("conn", Connection.class);
+				mv.LOADConst(sql);
+				mv.INTERFACE(Connection.class, "prepareStatement")
+					.parameter(String.class)
+					.reTurn(PreparedStatement.class)
+					.INVOKE();
+				mv.STORE("preparedStatement");
+			}
+			{
+				mv.line();
+				mv.LOAD("preparedStatement");
+				mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
+				mv.POP();
+			}
+			{
+				mv.line();
+				mv.RETURN();
+			}
+		});
+	}
+
+	private void listJdbc(String clazzTarget, List<FieldMapper> mappers, String tablename) {
+		cw.method(ACC_PUBLIC, "listJdbc")
+			.parameter("start", int.class)
+			.parameter("max", int.class)
+			.reTurn(GenericClazz.generic(List.class, clazzTarget))
 			.tHrow(SQLException.class)
 			.code(mv -> {
-				mv.define("preparedStatement", PreparedStatement.class);
+				mv.define("datas", GenericClazz.generic(List.class, clazzTarget));
+				mv.define("resultSet", ResultSet.class);
 				{
+					mv.line();
+					mv.NEW(ArrayList.class);
+					mv.DUP();
+					mv.SPECIAL(ArrayList.class, "<init>").INVOKE();
+					mv.STORE("datas");
+				}
+				{
+
+					StringBuilder sb = new StringBuilder();
+
+					List<String> names = new ArrayList<>();
+
+					for (FieldMapper fieldMapper : mappers) {
+						names.add(fieldMapper.column.name());
+					}
+
+					sb.append("SELECT ").append(String.join(",", names)).append(" FROM ").append(tablename);
+
+					String sql = sb.toString();
+
 					mv.line();
 					mv.LOAD("this");
 					mv.GETFIELD("conn", Connection.class);
-					mv.LOADConst("DELETE user WHERE id=?");
+					mv.LOADConst(sql);
+					mv.INTERFACE(Connection.class, "prepareStatement")
+						.parameter(String.class)
+						.reTurn(PreparedStatement.class)
+						.INVOKE();
+					mv.INTERFACE(PreparedStatement.class, "executeQuery").reTurn(ResultSet.class).INVOKE();
+					mv.STORE("resultSet");
+				}
+				mv.line();
+				Label whileStart = mv.codeNewLabel();
+				Label whileCause = mv.codeNewLabel();
+				Label whileEnd = mv.codeNewLabel();
+				mv.GOTO(whileCause);
+				mv.visitLabel(whileStart);
+				{
+					mv.line();
+					mv.LOAD("datas");
+					mv.LOAD("this");
+					mv.GETFIELD("mapper", this.clazzRowMapper);
+					mv.LOAD("resultSet");
+					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
+					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
+					mv.POP();
+				}
+				mv.line();
+				mv.visitLabel(whileCause);
+				{
+					mv.LOAD("resultSet");
+					mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
+					mv.IFNE(whileStart);
+				}
+				mv.visitLabel(whileEnd);
+				{
+					mv.line();
+					mv.LOAD("datas");
+					mv.RETURNTop();
+				}
+			});
+	}
+
+	private void findByIdJdbc(String clazzTarget, Class<Long> clazzID, List<FieldMapper> mappers) {
+		cw.method(ACC_PUBLIC, "findByIdJdbc")
+			.parameter("id", clazzID)
+			.reTurn(this.clazzTarget)
+			.tHrow(SQLException.class)
+			.code(mv -> {
+				mv.define("preparedStatement", PreparedStatement.class);
+				mv.define("resultSet", ResultSet.class);
+				mv.define("datas", GenericClazz.generic(List.class, clazzTarget));
+				{
+					mv.line();
+					mv.NEW(ArrayList.class);
+					mv.DUP();
+					mv.SPECIAL(ArrayList.class, "<init>").INVOKE();
+					mv.STORE("datas");
+				}
+				{
+
+					StringBuilder sb = new StringBuilder();
+
+					List<String> names = new ArrayList<>();
+					List<String> keys = new ArrayList<>();
+
+					for (FieldMapper fieldMapper : mappers) {
+						names.add(fieldMapper.column.name());
+						if (fieldMapper.primaryKey) {
+							keys.add(fieldMapper.column.name() + "=?");
+						}
+					}
+
+					sb.append("SELECT ")
+						.append(String.join(",", names))
+						.append(" FROM ")
+						.append("user")
+						.append(" WHERE ")
+						.append(String.join(" AND ", keys));
+
+					String sql = sb.toString();
+
+					mv.line();
+					mv.LOAD("this");
+					mv.GETFIELD("conn", Connection.class);
+					mv.LOADConst(sql);
 					mv.INTERFACE(Connection.class, "prepareStatement")
 						.parameter(String.class)
 						.reTurn(PreparedStatement.class)
@@ -140,23 +278,96 @@ public class JdbcRepositoryBuilder {
 				{
 					mv.line();
 					mv.LOAD("preparedStatement");
-					mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
+					mv.INTERFACE(PreparedStatement.class, "executeQuery").reTurn(ResultSet.class).INVOKE();
+					mv.STORE("resultSet");
+				}
+				mv.line();
+				Label whileStart = mv.codeNewLabel();
+				Label whileCause = mv.codeNewLabel();
+				Label whileEnd = mv.codeNewLabel();
+				mv.GOTO(whileCause);
+				mv.visitLabel(whileStart);
+				{
+					mv.line();
+					mv.LOAD("datas");
+					mv.LOAD("this");
+					mv.GETFIELD("mapper", this.clazzRowMapper);
+					mv.LOAD("resultSet");
+					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
+					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
+					mv.POP();
+				}
+				mv.line();
+				mv.visitLabel(whileCause);
+				{
+					mv.LOAD("resultSet");
+					mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
+					mv.IFNE(whileStart);
+				}
+				mv.visitLabel(whileEnd);
+				{
+					mv.line();
+					mv.LOAD("datas");
+					mv.LOADConst(0);
+					mv.INTERFACE(List.class, "get").parameter(int.class).reTurn(Object.class).INVOKE();
+					mv.CHECKCAST(this.clazzTarget);
 					mv.RETURNTop();
 				}
 			});
 	}
 
-	private void bindField(MethodCode mv, int index, String propGetName, Class<?> propGetClazz, String propSetName,
-			Class<?> propSetClazz) {
-		{
+	private void insertJdbc(List<FieldMapper> mappers, String tablename) {
+		cw.method(ACC_PUBLIC, "insertJdbc")
+			.parameter("data", this.clazzTarget)
+			.reTurn(boolean.class)
+			.tHrow(SQLException.class)
+			.code(mv -> {
+				mv.define("preparedStatement", PreparedStatement.class);
+				{
+					StringBuilder sb = new StringBuilder();
 
-			mv.line();
-			mv.LOAD("preparedStatement");
-			mv.LOADConst(index);
-			mv.LOAD("data");
-			mv.VIRTUAL(this.clazzTarget, propGetName).reTurn(propGetClazz).INVOKE();
-			mv.INTERFACE(PreparedStatement.class, propSetName).parameter(int.class, propSetClazz).INVOKE();
-		}
+					List<String> names = new ArrayList<>();
+					List<String> values = new ArrayList<>();
+
+					for (FieldMapper fieldMapper : mappers) {
+						names.add(fieldMapper.column.name());
+						values.add("?");
+					}
+
+					sb.append("INSERT INTO ")
+						.append(tablename)
+						.append("(")
+						.append(String.join(",", names))
+						.append(") VALUES (")
+						.append(String.join(",", values))
+						.append(")");
+
+					String sql = sb.toString();
+
+					mv.line();
+					mv.LOAD("this");
+					mv.GETFIELD("conn", Connection.class);
+					mv.LOADConst(sql);
+					mv.INTERFACE(Connection.class, "prepareStatement")
+						.parameter(String.class)
+						.reTurn(PreparedStatement.class)
+						.INVOKE();
+					mv.STORE("preparedStatement");
+				}
+
+				int i = 1;
+				for (FieldMapper fieldMapper : mappers) {
+					JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz.getName());
+					bindField(mv, i++, fieldMapper.getname, fieldMapper.fieldClazz, javaType.setname, javaType.clazz);
+				}
+
+				{
+					mv.line();
+					mv.LOAD("preparedStatement");
+					mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
+					mv.RETURNTop();
+				}
+			});
 	}
 
 	private void updateJdbc(List<FieldMapper> mappers, String tablename) {
@@ -224,81 +435,18 @@ public class JdbcRepositoryBuilder {
 			});
 	}
 
-	private void insertJdbc(List<FieldMapper> mappers, String tablename) {
-		cw.method(ACC_PUBLIC, "insertJdbc")
-			.parameter("data", this.clazzTarget)
-			.reTurn(boolean.class)
-			.tHrow(SQLException.class)/* new String[] { "java.sql.SQLException" } */
-			.code(mv -> {
-				mv.define("preparedStatement", PreparedStatement.class);
-				{
-					StringBuilder sb = new StringBuilder();
-
-					List<String> names = new ArrayList<>();
-					List<String> values = new ArrayList<>();
-
-					for (FieldMapper fieldMapper : mappers) {
-						names.add(fieldMapper.column.name());
-						values.add("?");
-					}
-
-					sb.append("INSERT INTO ")
-						.append(tablename)
-						.append("(")
-						.append(String.join(",", names))
-						.append(") VALUES (")
-						.append(String.join(",", values))
-						.append(")");
-
-					String sql = sb.toString();
-
-					mv.line();
-					mv.LOAD("this");
-					mv.GETFIELD("conn", Connection.class);
-					mv.LOADConst(sql);
-					mv.INTERFACE(Connection.class, "prepareStatement")
-						.parameter(String.class)
-						.reTurn(PreparedStatement.class)
-						.INVOKE();
-					mv.STORE("preparedStatement");
-				}
-
-				int i = 1;
-				for (FieldMapper fieldMapper : mappers) {
-					JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz.getName());
-					bindField(mv, i++, fieldMapper.getname, fieldMapper.fieldClazz, javaType.setname, javaType.clazz);
-				}
-
-				{
-					mv.line();
-					mv.LOAD("preparedStatement");
-					mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
-					mv.RETURNTop();
-				}
-			});
-	}
-
-	private void findByIdJdbc(String clazzTarget, Class<Long> clazzID) {
-		cw.method(ACC_PUBLIC, "findByIdJdbc")
+	private void deleteJdbc(Class<Long> clazzID) {
+		cw.method(ACC_PUBLIC, "deleteJdbc")
 			.parameter("id", clazzID)
-			.reTurn(this.clazzTarget)
+			.reTurn(boolean.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
-				mv.define("resultSet", ResultSet.class);
-				mv.define("datas", GenericClazz.generic(List.class, clazzTarget));
-				{
-					mv.line();
-					mv.NEW(ArrayList.class);
-					mv.DUP();
-					mv.SPECIAL(ArrayList.class, "<init>").INVOKE();
-					mv.STORE("datas");
-				}
 				{
 					mv.line();
 					mv.LOAD("this");
 					mv.GETFIELD("conn", Connection.class);
-					mv.LOADConst("SELECT * FROM user ORDER BY name WHERE id=?");
+					mv.LOADConst("DELETE user WHERE id=?");
 					mv.INTERFACE(Connection.class, "prepareStatement")
 						.parameter(String.class)
 						.reTurn(PreparedStatement.class)
@@ -315,137 +463,66 @@ public class JdbcRepositoryBuilder {
 				{
 					mv.line();
 					mv.LOAD("preparedStatement");
-					mv.INTERFACE(PreparedStatement.class, "executeQuery").reTurn(ResultSet.class).INVOKE();
-					mv.STORE("resultSet");
-				}
-				mv.line();
-				Label whileStart = mv.codeNewLabel();
-				Label whileCause = mv.codeNewLabel();
-				Label whileEnd = mv.codeNewLabel();
-				mv.GOTO(whileCause);
-				mv.visitLabel(whileStart);
-				{
-					mv.line();
-					mv.LOAD("datas");
-					mv.LOAD("this");
-					mv.GETFIELD("mapper", this.clazzRowMapper);
-					mv.LOAD("resultSet");
-					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
-					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
-					mv.POP();
-				}
-				mv.line();
-				mv.visitLabel(whileCause);
-				{
-					mv.LOAD("resultSet");
-					mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
-					mv.IFNE(whileStart);
-				}
-				mv.visitLabel(whileEnd);
-				{
-					mv.line();
-					mv.LOAD("datas");
-					mv.LOADConst(0);
-					mv.INTERFACE(List.class, "get").parameter(int.class).reTurn(Object.class).INVOKE();
-					mv.CHECKCAST(this.clazzTarget);
+					mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
 					mv.RETURNTop();
 				}
 			});
 	}
 
-	private void listJdbc(String clazzTarget) {
-		cw.method(ACC_PUBLIC, "listJdbc")
-			.parameter("start", int.class)
-			.parameter("max", int.class)
-			.reTurn(GenericClazz.generic(List.class, clazzTarget))
+	private void bindField(MethodCode mv, int index, String propGetName, Class<?> propGetClazz, String propSetName,
+			Class<?> propSetClazz) {
+		{
+
+			mv.line();
+			mv.LOAD("preparedStatement");
+			mv.LOADConst(index);
+			mv.LOAD("data");
+			mv.VIRTUAL(this.clazzTarget, propGetName).reTurn(propGetClazz).INVOKE();
+			mv.INTERFACE(PreparedStatement.class, propSetName).parameter(int.class, propSetClazz).INVOKE();
+		}
+	}
+
+	private void insertJdbcBridge() {
+		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "insertJdbc")
+			.parameter("data", Object.class)
+			.reTurn(boolean.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
-				mv.define("datas", GenericClazz.generic(List.class, clazzTarget));
-				mv.define("resultSet", ResultSet.class);
-				{
-					mv.line();
-					mv.NEW(ArrayList.class);
-					mv.DUP();
-					mv.SPECIAL(ArrayList.class, "<init>").INVOKE();
-					mv.STORE("datas");
-				}
-				{
-					mv.line();
-					mv.LOAD("this");
-					mv.GETFIELD("conn", Connection.class);
-					mv.LOADConst("SELECT * FROM user");
-					mv.INTERFACE(Connection.class, "prepareStatement")
-						.parameter(String.class)
-						.reTurn(PreparedStatement.class)
-						.INVOKE();
-					mv.INTERFACE(PreparedStatement.class, "executeQuery").reTurn(ResultSet.class).INVOKE();
-					mv.STORE("resultSet");
-				}
 				mv.line();
-				Label whileStart = mv.codeNewLabel();
-				Label whileCause = mv.codeNewLabel();
-				Label whileEnd = mv.codeNewLabel();
-				mv.GOTO(whileCause);
-				mv.visitLabel(whileStart);
-				{
-					mv.line();
-					mv.LOAD("datas");
-					mv.LOAD("this");
-					mv.GETFIELD("mapper", this.clazzRowMapper);
-					mv.LOAD("resultSet");
-					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
-					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
-					mv.POP();
-				}
-				mv.line();
-				mv.visitLabel(whileCause);
-				{
-					mv.LOAD("resultSet");
-					mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
-					mv.IFNE(whileStart);
-				}
-				mv.visitLabel(whileEnd);
-				{
-					mv.line();
-					mv.LOAD("datas");
-					mv.RETURNTop();
-				}
+				mv.LOAD("this");
+				mv.LOAD("data");
+				mv.CHECKCAST(this.clazzTarget);
+				mv.VIRTUAL(this.clazz, "insertJdbc").parameter(this.clazzTarget).reTurn(boolean.class).INVOKE();
+				mv.RETURNTop();
 			});
 	}
 
-	private void setConnection() {
-		cw.method(ACC_PUBLIC, "setConnection").parameter("conn", Connection.class).code(mv -> {
-			{
+	private void updateJdbcBridge() {
+		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "updateJdbc")
+			.parameter("data", Object.class)
+			.reTurn(boolean.class)
+			.tHrow(SQLException.class)
+			.code(mv -> {
 				mv.line();
 				mv.LOAD("this");
-				mv.LOAD("conn");
-				mv.PUTFIELD("conn", Connection.class);
-				mv.line();
-				mv.RETURN();
-			}
-		});
+				mv.LOAD("data");
+				mv.CHECKCAST(this.clazzTarget);
+				mv.VIRTUAL(this.clazz, "updateJdbc").parameter(this.clazzTarget).reTurn(boolean.class).INVOKE();
+				mv.RETURNTop();
+			});
 	}
 
-	private void init() {
-		cw.method(ACC_PUBLIC, "<init>").code(mv -> {
-			{
+	private void findByIdJdbcBridge(Class<Long> clazzID) {
+		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "findByIdJdbc")
+			.parameter("id", clazzID)
+			.reTurn(Object.class)
+			.tHrow(SQLException.class)
+			.code(mv -> {
 				mv.line();
 				mv.LOAD("this");
-				mv.SPECIAL(Object.class, "<init>").INVOKE();
-			}
-			{
-				mv.line();
-				mv.LOAD("this");
-				mv.NEW(this.clazzRowMapper);
-				mv.DUP();
-				mv.SPECIAL(this.clazzRowMapper, "<init>").INVOKE();
-				mv.PUTFIELD("mapper", this.clazzRowMapper);
-			}
-			{
-				mv.line();
-				mv.RETURN();
-			}
-		});
+				mv.LOAD("id");
+				mv.VIRTUAL(this.clazz, "findByIdJdbc").parameter(clazzID).reTurn(this.clazzTarget).INVOKE();
+				mv.RETURNTop();
+			});
 	}
-
 }

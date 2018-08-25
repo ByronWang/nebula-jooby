@@ -17,6 +17,7 @@ class FieldMapper {
 		this.fieldClazz = fieldClazz;
 		this.getname = getname;
 		this.column = column;
+		if(primaryKey) this.column.primarykey();
 	}
 
 	public FieldMapper(String javaname, String getname, Class<?> fieldClazz, ColumnDefination column) {

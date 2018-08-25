@@ -8,6 +8,15 @@ public interface JdbcRepository<T> extends Repository<T> {
 	void setConnection(Connection conn);
 
 	@Override
+	default void init() {
+		try {
+			initJdbc();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
 	default List<T> list(int start, int max) {
 		try {
 			return listJdbc(start, max);
@@ -51,6 +60,8 @@ public interface JdbcRepository<T> extends Repository<T> {
 			throw new RuntimeException(e);
 		}
 	}
+
+	void initJdbc() throws SQLException;
 
 	List<T> listJdbc(int start, int max) throws SQLException;
 

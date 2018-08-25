@@ -67,7 +67,7 @@ public class RepositoryFactory {
 		String targetClazz = type.getName();
 		String mapClazz = type.getName() + "RowMapper";
 
-		byte[] code = repositoryBuilder.make(clazz, targetClazz, mapClazz, mappers);
+		byte[] code = repositoryBuilder.make(clazz, targetClazz, mapClazz, type.getSimpleName(), mappers);
 
 		try {
 			@SuppressWarnings("unchecked")
