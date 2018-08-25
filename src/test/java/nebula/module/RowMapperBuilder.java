@@ -13,7 +13,6 @@ import org.jdbi.v3.core.statement.StatementContext;
 
 import nebula.jdbc.builders.schema.JDBCConfiguration;
 import nebula.jdbc.builders.schema.JDBCConfiguration.JavaType;
-import nebula.module.RepositoryFactory.FieldMapper;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.MethodCode;
@@ -24,46 +23,48 @@ public class RowMapperBuilder {
 		ClassBody cw = ClassBuilder.make(clazz).imPlements(RowMapper.class, targetClazz).body();
 
 		cw.constructerEmpty();
+		{
+			cw.method("map")
+				.parameter("rs", ResultSet.class)
+				.parameter("ctx", StatementContext.class)
+				.reTurn(targetClazz)
+				.tHrow(SQLException.class)
+				.code(mv -> {
+					mv.line();
+					mv.NEW(targetClazz);
+					mv.DUP();
+					Class<?>[] clazzes = new Class<?>[maps.size()];
+					for (int i = 0; i < maps.size(); i++) {
+						FieldMapper fieldMapper = maps.get(i);
+						String name = fieldMapper.pojoName;
+						JavaType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoType);
+						String getname = javatype.getname;
+						Class<?> jdbcClass = javatype.getclazz;
+						clazzes[i] = javatype.getclazz;
 
-		cw.publicMethod(targetClazz, "map")
-			.tHrow(SQLException.class)
-			.parameter("rs", ResultSet.class)
-			.parameter("ctx", StatementContext.class)
-			.code(mv -> {
-				mv.line();
-				mv.NEW(targetClazz);
-				mv.DUP();
+						map(mv, name, getname, jdbcClass, jdbcClass);
+					}
+					mv.SPECIAL(targetClazz, "<init>").parameter(clazzes).INVOKE();
+					mv.RETURNTop();
+				});
+		}
 
-				Class<?>[] clazzes = new Class<?>[maps.size()];
-				for (int i = 0; i < maps.size(); i++) {
-					FieldMapper fieldMapper = maps.get(i);
-					String name = fieldMapper.javaname;
-					JavaType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.javatype);
-					String getname = javatype.getname;
-					Class<?> jdbcClass = javatype.getclazz;
-					clazzes[i] = javatype.getclazz;
-
-					map(mv, name, getname, jdbcClass, jdbcClass);
-				}
-
-				mv.SPECIAL(targetClazz, "<init>").parameter(clazzes).INVOKE();
-
-				mv.RETURNTop();
-			});
-
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, Object.class.getName(), "map")
-			.tHrow(SQLException.class)
-			.parameter("rs", ResultSet.class)
-			.parameter("ctx", StatementContext.class)
-			.code(mv -> {
-				mv.line();
-				mv.LOAD(0);
-				mv.LOAD(1);
-				mv.LOAD(2);
-				mv.INVOKEVIRTUAL(cw.getName(), targetClazz, "map", ResultSet.class.getName(),
-						StatementContext.class.getName());
-				mv.RETURNTop();
-			});
+		{
+			cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "map")
+				.parameter("rs", ResultSet.class)
+				.parameter("ctx", StatementContext.class)
+				.reTurn(Object.class)
+				.tHrow(SQLException.class)
+				.code(mv -> {
+					mv.line();
+					mv.LOAD(0);
+					mv.LOAD(1);
+					mv.LOAD(2);
+					mv.INVOKEVIRTUAL(cw.getName(), targetClazz, "map", ResultSet.class.getName(),
+							StatementContext.class.getName());
+					mv.RETURNTop();
+				});
+		}
 
 		return cw.end().toByteArray();
 	}

@@ -17,7 +17,7 @@ import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.GenericClazz;
 
-public class UserJdbcRepositoryBuilder {
+public class JdbcRepositoryBuilder {
 
 	ClassBody cw;
 
@@ -27,7 +27,7 @@ public class UserJdbcRepositoryBuilder {
 
 	String clazzRowMapper;
 
-	public byte[] make(String clazz, String clazzTarget, String clazzRowMapper) throws IOException {
+	public byte[] make(String clazz, String clazzTarget, String clazzRowMapper, List<FieldMapper> mappers) {
 
 		this.clazz = clazz;
 		this.clazzTarget = clazzTarget;

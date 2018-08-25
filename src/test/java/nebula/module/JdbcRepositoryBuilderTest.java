@@ -8,6 +8,7 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.jooby.Results;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,11 +25,12 @@ import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.util.RefineCode;
 
-public class UserJdbcRepositoryTest2 extends TestBase {
-	Jdbi jdbi = Jdbi.create("jdbc:h2:mem:test"); // (H2 in-memory database)
+public class JdbcRepositoryBuilderTest extends TestBase {
+	Jdbi jdbi;
 
 	@Before
 	public void before() {
+		jdbi = Jdbi.create("jdbc:h2:mem:test"); // (H2 in-memory database)
 		jdbi.open();
 	}
 
@@ -35,10 +38,10 @@ public class UserJdbcRepositoryTest2 extends TestBase {
 	public void after() {
 	}
 
-	@Test
-	public void testPrint() throws IOException {
-		System.out.println(RefineCode.refineCode(toString(UserJdbcRepository.class)));
-	}
+//	@Test
+//	public void testPrint() throws IOException {
+//		System.out.println(RefineCode.refineCode(toString(UserJdbcRowMapper.class),ResultSet.class,PreparedStatement.class,JdbcRepository.class));
+//	}
 
 	class MyClassLoader extends ClassLoader {
 		public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
@@ -58,15 +61,16 @@ public class UserJdbcRepositoryTest2 extends TestBase {
 
 		Connection connection = jdbi.open().getConnection();
 		// 利用反射创建对象
-		JdbcRepository<User> userRepository = new UserJdbcRepository();
-		userRepository.setConnection(connection);
-		
+		Repository<User> userRepository = new RepositoryFactory(connection).getRepository(User.class);
+		((JdbcRepository<User>)userRepository).setConnection(connection);
+
 		jdbi.useHandle(handle -> {
 			handle.execute("CREATE TABLE user (id INTEGER PRIMARY KEY, name VARCHAR ,description VARCHAR)");
 			handle.commit();
 		});
-
-//		UserRepository userRepository = new UserRepository(jdbi);
+//
+////		UserRepository userRepository = new UserRepository(jdbi);
+//		UserRepository userRepository = RepositoryFactory.getRepository(User.class);
 		List<User> users1 = userRepository.list(0, 0);
 
 		User a = new User(0, "wangshilian", "desctiption0");
@@ -96,14 +100,14 @@ public class UserJdbcRepositoryTest2 extends TestBase {
 	}
 
 	@Test
-	public void testConstructerEmptyCode() throws IOException {
+	public void testConstructerEmptyCode() {
 
 		String clazz = UserJdbcRepository.class.getName();
 		String targetClazz = User.class.getName();
 		String mapClazz = UserJdbcRowMapper.class.getName();
 
-		UserJdbcRepositoryBuilder builder = new UserJdbcRepositoryBuilder();
-		byte[] code = builder.make(clazz, targetClazz, mapClazz);
+		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder();
+		byte[] code = builder.make(clazz, targetClazz, mapClazz, null);
 
 		String codeActual = toString(code);
 		String codeExpected = toString(clazz);

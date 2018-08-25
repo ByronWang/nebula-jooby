@@ -4,13 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.mapper.RowMapper;
 
 import nebula.jdbc.builders.schema.ColumnDefination;
 import nebula.jdbc.builders.schema.ColumnFactory;
@@ -18,8 +15,13 @@ import nebula.jdbc.builders.schema.JDBCConfiguration;
 import nebula.jdbc.builders.schema.JDBCTypes;
 
 public class RepositoryFactory {
+	Connection conn;
 
-	static class MyClassLoader extends ClassLoader {
+	public RepositoryFactory(Connection conn) {
+		this.conn = conn;
+	}
+
+	class MyClassLoader extends ClassLoader {
 		public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
 			{
 				File root = new File("target/generated-sources");
@@ -49,26 +51,18 @@ public class RepositoryFactory {
 		}
 	}
 
-	static private void makesureFolderExists(File file) {
+	private void makesureFolderExists(File file) {
 		if (!file.getParentFile().exists()) makesureFolderExists(file.getParentFile());
 		file.mkdir();
 	}
 
-	static MyClassLoader myClassLoader = new MyClassLoader();
+	private MyClassLoader myClassLoader = new MyClassLoader();
 
-	static <T> Repository<T> getRepository(Class<T> type) {
+	public <T> Repository<T> getRepository(Class<T> type) {
+		List<FieldMapper> mappers = build(type);
+
 		getMapper(type);
 
-		List<FieldMapper> mappers = new ArrayList<>();
-
-		for (Field field : type.getDeclaredFields()) {
-			String name = field.getName();
-			String fieldType = field.getType().getName();
-			JDBCTypes jdbctype = JDBCConfiguration.mapperRevert.get(fieldType);
-			ColumnDefination column = ColumnFactory.Column(jdbctype, name);
-			FieldMapper mapper = new FieldMapper(name, fieldType, column);
-			mappers.add(mapper);
-		}
 		String clazz = type.getName() + "Repository";
 		String targetClazz = type.getName();
 		String mapClazz = type.getName() + "RowMapper";
@@ -77,21 +71,17 @@ public class RepositoryFactory {
 
 		try {
 			@SuppressWarnings("unchecked")
-			Class<Repository<T>> rowMapperClazz = (Class<Repository<T>>) myClassLoader.defineClassByName(clazz, code);
-			Constructor<Repository<T>> ct = rowMapperClazz.getConstructor(Jdbi.class);
-
-			Jdbi jdbi = null;
-			Repository<T> userRepository = (Repository<T>) ct.newInstance(jdbi);
-			return userRepository;
+			Class<JdbcRepository<T>> clazzJdbcRepository = (Class<JdbcRepository<T>>) myClassLoader
+				.defineClassByName(clazz, code);
+			JdbcRepository<T> jdbcRepository = clazzJdbcRepository.newInstance();
+			jdbcRepository.setConnection(this.conn);
+			return jdbcRepository;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	static RowMapperBuilder rowMapperBuilder = new RowMapperBuilder();
-	static RepositoryBuilder repositoryBuilder = new RepositoryBuilder();
-
-	static <T> RowMapper<T> getMapper(Class<T> type) {
+	private List<FieldMapper> build(Class<?> type) {
 		List<FieldMapper> mappers = new ArrayList<>();
 
 		for (Field field : type.getDeclaredFields()) {
@@ -102,6 +92,14 @@ public class RepositoryFactory {
 			FieldMapper mapper = new FieldMapper(name, fieldType, column);
 			mappers.add(mapper);
 		}
+		return mappers;
+	}
+
+	public JdbcRowMapperBuilder rowMapperBuilder = new JdbcRowMapperBuilder();
+	public JdbcRepositoryBuilder repositoryBuilder = new JdbcRepositoryBuilder();
+
+	public <T> JdbcRowMapper<T> getMapper(Class<T> type) {
+		List<FieldMapper> mappers = build(type);
 
 		String clazz = type.getName() + "RowMapper";
 		String targetClazz = type.getName();
@@ -110,28 +108,15 @@ public class RepositoryFactory {
 
 		try {
 			@SuppressWarnings("unchecked")
-			Class<RowMapper<T>> rowMapperClazz = (Class<RowMapper<T>>) myClassLoader.defineClassByName(clazz, code);
-			RowMapper<T> rowMapper = rowMapperClazz.newInstance();
+			Class<JdbcRowMapper<T>> rowMapperClazz = (Class<JdbcRowMapper<T>>) myClassLoader.defineClassByName(clazz,
+					code);
+			JdbcRowMapper<T> rowMapper = rowMapperClazz.newInstance();
 			return rowMapper;
 		} catch (InstantiationException e) {
 			throw new RuntimeException(e);
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	static class FieldMapper {
-		String javaname;
-		String javatype;
-		ColumnDefination column;
-
-		public FieldMapper(String javaname, String javatype, ColumnDefination column) {
-			super();
-			this.javaname = javaname;
-			this.javatype = javatype;
-			this.column = column;
-		}
-
 	}
 
 }

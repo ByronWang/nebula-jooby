@@ -20,7 +20,6 @@ import org.jdbi.v3.core.statement.Update;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 
-import nebula.module.RepositoryFactory.FieldMapper;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.GenericClazz;
