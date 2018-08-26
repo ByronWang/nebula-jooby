@@ -27,14 +27,15 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 	JdbcRowMapperBuilder jdbcRowMapperBuilder;
 
 	JdbcRepositoryBuilder jdbcRepositoryBuilder;
+	Arguments arguments =  new Arguments();
 
 	@Before
 	public void before() {
 		jdbi = Jdbi.create("jdbc:h2:mem:test"); // (H2 in-memory database)
 		jdbi.open();
 		classLoader = new MyClassLoader();
-		jdbcRowMapperBuilder = new JdbcRowMapperBuilder();
-		jdbcRepositoryBuilder = new JdbcRepositoryBuilder();
+		jdbcRowMapperBuilder = new JdbcRowMapperBuilder(arguments);
+		jdbcRepositoryBuilder = new JdbcRepositoryBuilder(arguments);
 		maps = new ArrayList<FieldMapper>();
 		clazz = UserJdbcRowMapper.class.getName();
 		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefination("id", JDBCTypes.INTEGER)));
@@ -125,7 +126,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		String targetClazz = User.class.getName();
 		String mapClazz = UserJdbcRowMapper.class.getName();
 
-		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder();
+		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder(new Arguments());
 		byte[] code = builder.make(clazz, targetClazz, mapClazz, "user", maps);
 
 		String codeActual = toString(code);

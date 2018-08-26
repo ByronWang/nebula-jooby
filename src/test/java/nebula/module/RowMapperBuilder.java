@@ -37,10 +37,10 @@ public class RowMapperBuilder {
 					for (int i = 0; i < maps.size(); i++) {
 						FieldMapper fieldMapper = maps.get(i);
 						String name = fieldMapper.fieldName;
-						JDBCType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz.getName());
+						JDBCType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
 						String getname = javatype.getname;
-						Class<?> jdbcClass = javatype.clazz;
-						clazzes[i] = javatype.clazz;
+						Class<?> jdbcClass = javatype.jdbcClazz;
+						clazzes[i] = javatype.jdbcClazz;
 
 						map(mv, name, getname, jdbcClass, jdbcClass);
 					}

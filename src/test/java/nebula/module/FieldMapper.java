@@ -6,7 +6,7 @@ class FieldMapper {
 	final boolean primaryKey;
 	final String fieldName;
 	final String getname;
-	final Class<?> fieldClazz;
+	final Class<?> pojoClazz;
 	final ColumnDefination column;
 
 	public FieldMapper(boolean primaryKey, String javaname, String getname, Class<?> fieldClazz,
@@ -14,7 +14,7 @@ class FieldMapper {
 		super();
 		this.primaryKey = primaryKey;
 		this.fieldName = javaname;
-		this.fieldClazz = fieldClazz;
+		this.pojoClazz = fieldClazz;
 		this.getname = getname;
 		this.column = column;
 		if(primaryKey) this.column.primarykey();

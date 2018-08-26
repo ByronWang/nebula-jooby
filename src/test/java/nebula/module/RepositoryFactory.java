@@ -16,6 +16,7 @@ import nebula.jdbc.builders.schema.JDBCTypes;
 
 public class RepositoryFactory {
 	Connection conn;
+	Arguments arguments = new Arguments();
 
 	public RepositoryFactory(Connection conn) {
 		this.conn = conn;
@@ -88,6 +89,7 @@ public class RepositoryFactory {
 			String fieldname = field.getName();
 			Class<?> fieldClazz = field.getType();
 			JDBCTypes jdbctype = JDBCConfiguration.mapperRevert.get(fieldClazz.getName());
+			assert jdbctype != null : fieldClazz.getName() + " hasn't exist!";
 			ColumnDefination column = ColumnFactory.Column(jdbctype, fieldname);
 			String getname = getGetName(field.getName(), field.getType());
 			boolean primaryKey = "id".equals(fieldname);
@@ -105,8 +107,8 @@ public class RepositoryFactory {
 		}
 	}
 
-	public JdbcRowMapperBuilder rowMapperBuilder = new JdbcRowMapperBuilder();
-	public JdbcRepositoryBuilder repositoryBuilder = new JdbcRepositoryBuilder();
+	public JdbcRowMapperBuilder rowMapperBuilder = new JdbcRowMapperBuilder(arguments);
+	public JdbcRepositoryBuilder repositoryBuilder = new JdbcRepositoryBuilder(arguments);
 
 	public <T> JdbcRowMapper<T> getMapper(Class<T> type) {
 		List<FieldMapper> mappers = build(type);

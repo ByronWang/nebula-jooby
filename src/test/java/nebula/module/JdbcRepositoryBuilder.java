@@ -22,6 +22,11 @@ import nebula.tinyasm.data.GenericClazz;
 import nebula.tinyasm.data.MethodCode;
 
 public class JdbcRepositoryBuilder {
+	Arguments arguments;
+
+	public JdbcRepositoryBuilder(Arguments arguments) {
+		this.arguments = arguments;
+	}
 
 	ClassBody cw;
 
@@ -357,8 +362,8 @@ public class JdbcRepositoryBuilder {
 
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
-					JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz.getName());
-					bindField(mv, i++, fieldMapper.getname, fieldMapper.fieldClazz, javaType.setname, javaType.clazz);
+					JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
+					bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname, javaType.jdbcClazz);
 				}
 
 				{
@@ -414,16 +419,16 @@ public class JdbcRepositoryBuilder {
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
 					if (!fieldMapper.primaryKey) {
-						JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz.getName());
-						bindField(mv, i++, fieldMapper.getname, fieldMapper.fieldClazz, javaType.setname,
-								javaType.clazz);
+						JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
+						bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname,
+								javaType.jdbcClazz);
 					}
 				}
 
 				for (FieldMapper fieldMapper : mappers) {
 					if (fieldMapper.primaryKey) {
-						JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz.getName());
-						bindField(mv, i++, fieldMapper.getname, javaType.clazz, javaType.setname, javaType.clazz);
+						JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
+						bindField(mv, i++, fieldMapper.getname, javaType.jdbcClazz, javaType.setname, javaType.jdbcClazz);
 					}
 				}
 				{
@@ -484,16 +489,18 @@ public class JdbcRepositoryBuilder {
 			});
 	}
 
-	private void bindField(MethodCode mv, int index, String propGetName, Class<?> propGetClazz, String propSetName,
-			Class<?> propSetClazz) {
+	private void bindField(MethodCode mv, int index, String propGetName, Class<?> pojoGetClazz, String jdbcSetName,
+			Class<?> jdbcSetClazz) {
 		{
-
 			mv.line();
 			mv.LOAD("preparedStatement");
 			mv.LOADConst(index);
 			mv.LOAD("data");
-			mv.VIRTUAL(this.clazzTarget, propGetName).reTurn(propGetClazz).INVOKE();
-			mv.INTERFACE(PreparedStatement.class, propSetName).parameter(int.class, propSetClazz).INVOKE();
+			mv.VIRTUAL(this.clazzTarget, propGetName).reTurn(pojoGetClazz).INVOKE();
+			if (pojoGetClazz != jdbcSetClazz) {
+				arguments.getConvert(pojoGetClazz, jdbcSetClazz).apply(mv);
+			}
+			mv.INTERFACE(PreparedStatement.class, jdbcSetName).parameter(int.class, jdbcSetClazz).INVOKE();
 		}
 	}
 

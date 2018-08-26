@@ -26,11 +26,12 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 	List<FieldMapper> maps;
 	JdbcRowMapperBuilder builder;
 	MyClassLoader classLoader;
+	Arguments arguments = new Arguments();
 
 	@Before
 	public void before() {
 		classLoader = new MyClassLoader();
-		builder = new JdbcRowMapperBuilder();
+		builder = new JdbcRowMapperBuilder(arguments);
 		maps = new ArrayList<FieldMapper>();
 		clazz = UserJdbcRowMapper.class.getName();
 		maps.add(new FieldMapper("id", "getId", long.class, new ColumnDefination("id", JDBCTypes.INTEGER)));

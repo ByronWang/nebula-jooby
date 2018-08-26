@@ -15,6 +15,12 @@ import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.MethodCode;
 
 public class JdbcRowMapperBuilder {
+	Arguments arguments;
+
+	public JdbcRowMapperBuilder(Arguments arguments) {
+		this.arguments = arguments;
+	}
+
 	public byte[] make(String clazz, String targetClazz, List<FieldMapper> maps) {
 
 		ClassBody cw = ClassBuilder.make(clazz).imPlements(JdbcRowMapper.class, targetClazz).body();
@@ -29,12 +35,13 @@ public class JdbcRowMapperBuilder {
 				for (int i = 0; i < maps.size(); i++) {
 					FieldMapper fieldMapper = maps.get(i);
 					String name = fieldMapper.fieldName;
-					JDBCType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.fieldClazz.getName());
+					JDBCType javatype = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
 					String getname = javatype.getname;
-					Class<?> jdbcClass = javatype.clazz;
-					clazzes[i] = javatype.clazz;
+					Class<?> jdbcClazz = javatype.jdbcClazz;
+					Class<?> pojoClazz = fieldMapper.pojoClazz;
+					clazzes[i] = pojoClazz;
 
-					map(mv, name, getname, jdbcClass, jdbcClass);
+					map(mv, name, getname, pojoClazz, jdbcClazz);
 				}
 				mv.SPECIAL(targetClazz, "<init>").parameter(clazzes).INVOKE();
 				mv.RETURNTop();
@@ -57,11 +64,14 @@ public class JdbcRowMapperBuilder {
 		return cw.end().toByteArray();
 	}
 
-	private void map(MethodCode mv, String name, String jdbcFuncName, Class<?> jdbcType, Class<?> pojoType) {
+	private void map(MethodCode mv, String name, String jdbcFuncName, Class<?> pojoClazz, Class<?> jdbcClazz) {
 		{
 			mv.LOAD("rs");
 			mv.LOADConst(name);
-			mv.INTERFACE(ResultSet.class, jdbcFuncName).parameter(String.class).reTurn(jdbcType).INVOKE();
+			mv.INTERFACE(ResultSet.class, jdbcFuncName).parameter(String.class).reTurn(jdbcClazz).INVOKE();
+			if (pojoClazz != jdbcClazz) {
+				arguments.getRevert(pojoClazz, jdbcClazz).apply(mv);
+			}
 		}
 	}
 }
