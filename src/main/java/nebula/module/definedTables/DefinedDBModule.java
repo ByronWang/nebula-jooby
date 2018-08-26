@@ -2,6 +2,7 @@ package nebula.module.definedTables;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +92,6 @@ public class DefinedDBModule implements Jooby.Module {
 			 */
 			router.get("/:id", req -> {
 				String tableName = req.param("id").value();
-
 				Jdbi jdbi = req.require(Jdbi.class);
 
 				List<ColumnDefinition> columns = jdbi.withHandle(h -> {

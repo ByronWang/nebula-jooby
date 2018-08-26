@@ -1,16 +1,16 @@
 package nebula.module;
 
-import nebula.jdbc.builders.schema.ColumnDefination;
+import nebula.jdbc.builders.schema.ColumnDefinition;
 
 class FieldMapper {
 	final boolean primaryKey;
 	final String fieldName;
 	final String getname;
 	final Class<?> pojoClazz;
-	final ColumnDefination column;
+	final ColumnDefinition column;
 
 	public FieldMapper(boolean primaryKey, String javaname, String getname, Class<?> fieldClazz,
-			ColumnDefination column) {
+			ColumnDefinition column) {
 		super();
 		this.primaryKey = primaryKey;
 		this.fieldName = javaname;
@@ -20,7 +20,7 @@ class FieldMapper {
 		if(primaryKey) this.column.primarykey();
 	}
 
-	public FieldMapper(String javaname, String getname, Class<?> fieldClazz, ColumnDefination column) {
+	public FieldMapper(String javaname, String getname, Class<?> fieldClazz, ColumnDefinition column) {
 		this(false, javaname, getname, fieldClazz, column);
 	}
 

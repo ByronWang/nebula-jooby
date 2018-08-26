@@ -26,7 +26,7 @@ public class UserRepositoryTest extends TestBase {
 
 	@Test
 	public void testPrint() throws IOException {
-		System.out.println(RefineCode.refineCode(toString(UserRepository2.class)));
+		System.out.println(RefineCode.refineCode(toString(UserRepository.class)));
 	}
 
 	class MyClassLoader extends ClassLoader {

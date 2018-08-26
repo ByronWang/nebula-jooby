@@ -2,48 +2,48 @@ package nebula.module.definedTables;
 
 public class ColumnDefinition {
 
-	private String columnName;
-	private int dataType;
+	private String name;
+	private int datatype;
 	private String typeName;
-	private int size;
-	private int decimalDigits;
-	private boolean isNullable;
-	private boolean isAutoIncrment;
+	private int size = -1;
+	private int digits = -1;
+	private boolean nullable = true;
+	private boolean autoIncrements = false;
 
 	public String getColumnName() {
-		return columnName;
+		return name;
 	}
 
 	public int getDataType() {
-		return dataType;
+		return datatype;
 	}
 
 	public int getSize() {
 		return size;
 	}
 
-	public int getDecimalDigits() {
-		return decimalDigits;
+	public int getDigits() {
+		return digits;
 	}
 
 	public boolean isNullable() {
-		return isNullable;
+		return nullable;
 	}
 
 	public boolean isAutoIncrment() {
-		return isAutoIncrment;
+		return autoIncrements;
 	}
 
 	public ColumnDefinition(String columnName, int dataType, String typeName, int size, int decimalDigits,
 			boolean isNullable, boolean isAutoIncrment) {
 		super();
-		this.columnName = columnName;
-		this.dataType = dataType;
+		this.name = columnName;
+		this.datatype = dataType;
 		this.typeName = typeName;
 		this.size = size;
-		this.decimalDigits = decimalDigits;
-		this.isNullable = isNullable;
-		this.isAutoIncrment = isAutoIncrment;
+		this.digits = decimalDigits;
+		this.nullable = isNullable;
+		this.autoIncrements = isAutoIncrment;
 	}
 
 	public String getTypeName() {

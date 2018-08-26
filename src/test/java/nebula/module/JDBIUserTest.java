@@ -26,7 +26,7 @@ public class JDBIUserTest extends TestBase {
 			handle.commit();
 		});
 
-		UserRepository2 userRepository = new UserRepository2(jdbi);
+		UserRepository userRepository = new UserRepository(jdbi);
 		List<User> users1 = userRepository.list(0, 0);
 
 		User a = new User(0, "wangshilian","desctiption");

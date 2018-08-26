@@ -5,11 +5,11 @@ import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.Update;
 
-public class UserRepository2 implements Repository<User> {
+public class UserRepository implements Repository<User> {
 	Jdbi jdbi;
 	static UserMapper mapper = new UserMapper();
 
-	public UserRepository2(Jdbi jdbi) {
+	public UserRepository(Jdbi jdbi) {
 		this.jdbi = jdbi;
 	}
 
