@@ -54,13 +54,13 @@ public class JdbcRepositoryBuilder {
 
 		listJdbc(clazzTarget, mappers, tablename);
 
-		findByIdJdbc(clazzTarget, clazzID, mappers);
+		findByIdJdbc(clazzTarget, clazzID, mappers, tablename);
 
 		insertJdbc(mappers, tablename);
 
 		updateJdbc(mappers, tablename);
 
-		deleteJdbc(clazzID);
+		deleteJdbc(clazzID, mappers, tablename);
 
 		findByIdJdbcBridge(clazzID);
 
@@ -219,7 +219,7 @@ public class JdbcRepositoryBuilder {
 			});
 	}
 
-	private void findByIdJdbc(String clazzTarget, Class<Long> clazzID, List<FieldMapper> mappers) {
+	private void findByIdJdbc(String clazzTarget, Class<Long> clazzID, List<FieldMapper> mappers, String tablename) {
 		cw.method(ACC_PUBLIC, "findByIdJdbc")
 			.parameter("id", clazzID)
 			.reTurn(this.clazzTarget)
@@ -252,7 +252,7 @@ public class JdbcRepositoryBuilder {
 					sb.append("SELECT ")
 						.append(String.join(",", names))
 						.append(" FROM ")
-						.append("user")
+						.append(tablename)
 						.append(" WHERE ")
 						.append(String.join(" AND ", keys));
 
@@ -435,7 +435,7 @@ public class JdbcRepositoryBuilder {
 			});
 	}
 
-	private void deleteJdbc(Class<Long> clazzID) {
+	private void deleteJdbc(Class<Long> clazzID, List<FieldMapper> mappers, String tablename) {
 		cw.method(ACC_PUBLIC, "deleteJdbc")
 			.parameter("id", clazzID)
 			.reTurn(boolean.class)
@@ -443,10 +443,25 @@ public class JdbcRepositoryBuilder {
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				{
+
+					List<String> keys = new ArrayList<>();
+
+					for (FieldMapper fieldMapper : mappers) {
+						if (!fieldMapper.primaryKey) {
+						} else {
+							keys.add(fieldMapper.column.name() + "=?");
+						}
+					}
+
+					StringBuilder sb = new StringBuilder();
+
+					sb.append("DELETE ").append(tablename).append(" WHERE ").append(String.join(" and ", keys));
+
+					String sql = sb.toString();
 					mv.line();
 					mv.LOAD("this");
 					mv.GETFIELD("conn", Connection.class);
-					mv.LOADConst("DELETE user WHERE id=?");
+					mv.LOADConst(sql);
 					mv.INTERFACE(Connection.class, "prepareStatement")
 						.parameter(String.class)
 						.reTurn(PreparedStatement.class)

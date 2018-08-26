@@ -12,8 +12,6 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import nebula.module.TestBase.MyClassLoader;
-
 public class TestBase {
 
 	MyClassLoader classLoader = new MyClassLoader();
