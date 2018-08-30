@@ -2,7 +2,7 @@ package nebula.module;
 
 import nebula.jdbc.builders.schema.ColumnDefinition;
 
-class FieldMapper {
+public class FieldMapper {
 	final boolean primaryKey;
 	final String fieldName;
 	final String getname;

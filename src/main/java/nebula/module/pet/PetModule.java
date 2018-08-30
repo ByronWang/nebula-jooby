@@ -24,7 +24,7 @@ public class PetModule implements Jooby.Module {
 		env.onStart(registry -> {
 			Jdbi jdbi = registry.require(Jdbi.class);
 			jdbi.useHandle(h -> {
-				h.createUpdate("create table pets (id bigint auto_increment, name varchar(255), desciption varchar(255))").execute();
+				h.createUpdate("create table IF NOT EXISTS pets (id bigint auto_increment, name varchar(255), desciption varchar(255))").execute();
 
 				PetRepository repo = h.attach(PetRepository.class);
 				repo.insert(new Pet(1L, "Lala", "Lala"));

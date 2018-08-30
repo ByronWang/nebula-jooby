@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Binder;
 import com.typesafe.config.Config;
 
-import nebula.module.dbTable.DbColumn;
-import nebula.module.dbTable.DbTable;
+import nebula.db.DbColumn;
+import nebula.jdbc.builders.schema.ColumnDefinition;
+import nebula.jdbc.builders.schema.ColumnList;
+import nebula.jdbc.builders.schema.DBSchemaMerge;
 import nebula.module.dbTable.DbTableFat;
-import nebula.module.definedTables.ColumnDefinition;
-import nebula.module.definedTables.DefinedTable;
 
 public class ViewsModule implements Jooby.Module {
 	private final Logger log = LoggerFactory.getLogger(getClass());
@@ -42,63 +42,69 @@ public class ViewsModule implements Jooby.Module {
 				String tableName = req.param("id").value().toUpperCase();
 
 				Jdbi jdbi = req.require(Jdbi.class);
-
-				DbTableFat table = jdbi.withHandle(h -> {
-					DbTableFat rawTable = null;
-					Connection c = h.getConnection();
-
-					try (ResultSet rs = c.getMetaData()
-							.getTables(null, null, tableName, new String[] { "TABLE", "SYSTEM TABLE" })) {
-
-						ResultSetMetaData metaData = rs.getMetaData();
-						int count = metaData.getColumnCount();
-						System.out.println("count:" + count);
-						for (int i = 0; i < count; i++) {
-							System.out.println(metaData.getColumnName(i + 1) + " " + metaData.getColumnTypeName(i + 1));
-						}
-
-						System.out.println("Printing TABLE_TYPE \"TABLE\" ");
-						System.out.println("----------------------------------");
-						if (rs.next()) {
-							rawTable = new DbTableFat.Mapper().map(rs, null);
-						}
-					}
-
-					List<DbColumn> columns = new ArrayList<>();
-
-					DbColumn.Mapper mapper = new DbColumn.Mapper();
-					try (ResultSet rs = c.getMetaData()
-							.getColumns(null, null, tableName, null)) {
-						ResultSetMetaData metaData = rs.getMetaData();
-						int count = metaData.getColumnCount();
-						System.out.println("count:" + count);
-						for (int i = 0; i < count; i++) {
-							System.out.println(metaData.getColumnName(i + 1) + " " + metaData.getColumnTypeName(i + 1));
-						}
-
-						while (rs.next()) {
-							DbColumn column = mapper.map(rs, null);
-							columns.add(column);
-							log.info(column.toString());
-						}
-					}
-
-					rawTable.setColumns(columns);
-
-					return rawTable;
+//
+//				DbTableFat table = jdbi.withHandle(h -> {
+//					DbTableFat rawTable = null;
+//					Connection conn = h.getConnection();
+//					
+//					
+//					ColumnList cl =  new DBSchemaMerge().getCurrentActualColumns(conn, tableName);
+//					try (ResultSet rs = conn.getMetaData()
+//							.getColumns(null, null, tableName, new String[] { "TABLE", "SYSTEM TABLE" })) {
+//
+//						ResultSetMetaData metaData = rs.getMetaData();
+//						int count = metaData.getColumnCount();
+//						System.out.println("count:" + count);
+//						for (int i = 0; i < count; i++) {
+//							System.out.println(metaData.getColumnName(i + 1) + " " + metaData.getColumnTypeName(i + 1));
+//						}
+//
+//						System.out.println("Printing TABLE_TYPE \"TABLE\" ");
+//						System.out.println("----------------------------------");
+//						if (rs.next()) {
+//							rawTable = new DbTableFat.Mapper().map(rs, null);
+//						}
+//					}
+//
+//					List<DbColumn> columns = new ArrayList<>();
+//
+//					DbColumn.Mapper mapper = new DbColumn.Mapper();
+//					try (ResultSet rs = conn.getMetaData()
+//							.getColumns(null, null, tableName, null)) {
+//						ResultSetMetaData metaData = rs.getMetaData();
+//						int count = metaData.getColumnCount();
+//						System.out.println("count:" + count);
+//						for (int i = 0; i < count; i++) {
+//							System.out.println(metaData.getColumnName(i + 1) + " " + metaData.getColumnTypeName(i + 1));
+//						}
+//
+//						while (rs.next()) {
+//							DbColumn column = mapper.map(rs, null);
+//							columns.add(column);
+//							log.info(column.toString());
+//						}
+//					}
+//
+//					rawTable.setColumns(columns);
+//
+//					return rawTable;
+//				});
+//
+//				if (table == null) {
+//					throw new Err(Status.NOT_FOUND);
+//				}
+				ColumnList columns = jdbi.withHandle(h -> {
+					Connection conn = h.getConnection();
+					ColumnList cl = new DBSchemaMerge().getCurrentActualColumns(conn, tableName);
+					return cl;
 				});
+				List<Field> fields = new ArrayList<>();
 
-				if (table == null) {
-					throw new Err(Status.NOT_FOUND);
+				for (ColumnDefinition c : columns) {
+					fields.add(new Field(c.getName().toLowerCase(), "TextInput"));
 				}
-				
-				List<Field> fields=  new ArrayList<>();
-				
-				for(DbColumn c : table.getColumns()) {
-					fields.add(new Field(c.getColumnName().toLowerCase(), "TextInput"));
-				}
-				
-				View view = new View(fields.toArray(new Field[0]));
+
+				DyncView view = new DyncView(fields.toArray(new Field[0]));
 				return view;
 			});
 		});
