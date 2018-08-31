@@ -1,30 +1,25 @@
 package views;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jdbi.v3.core.Jdbi;
 import org.jooby.Env;
-import org.jooby.Err;
 import org.jooby.Jooby;
 import org.jooby.Router;
-import org.jooby.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Binder;
 import com.typesafe.config.Config;
 
-import nebula.db.DbColumn;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.DBSchemaMerge;
-import nebula.module.dbTable.DbTableFat;
 
 public class ViewsModule implements Jooby.Module {
+	@SuppressWarnings("unused")
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	public void configure(Env env, Config conf, Binder binder) {
@@ -95,7 +90,7 @@ public class ViewsModule implements Jooby.Module {
 //				}
 				ColumnList columns = jdbi.withHandle(h -> {
 					Connection conn = h.getConnection();
-					ColumnList cl = new DBSchemaMerge().getCurrentActualColumns(conn, tableName);
+					ColumnList cl = new DBSchemaMerge().getColumns(conn, tableName);
 					return cl;
 				});
 				List<Field> fields = new ArrayList<>();
