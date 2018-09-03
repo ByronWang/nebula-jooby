@@ -48,8 +48,6 @@ public class DbTableModule implements Jooby.Module {
 					Connection c = h.getConnection();
 					try (ResultSet rs = c.getMetaData()
 							.getTables(null, null, null, new String[] { "TABLE", "SYSTEM TABLE" })) {
-						System.out.println("Printing TABLE_TYPE \"TABLE\" ");
-						System.out.println("----------------------------------");
 
 						while (rs.next()) {
 							DbTable table = new DbTable.Mapper().map(rs, null);

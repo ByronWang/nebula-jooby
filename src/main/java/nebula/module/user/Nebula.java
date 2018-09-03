@@ -19,6 +19,7 @@ import com.typesafe.config.Config;
 
 import nebula.data.jdbc.FieldList;
 import nebula.data.jdbc.FieldMapper;
+import nebula.data.jdbc.PageList;
 import nebula.data.jdbc.Repository;
 import nebula.data.jdbc.RepositoryFactory;
 import views.DyncView;
@@ -72,10 +73,10 @@ public class Nebula implements Jooby.Module {
 				String[] ra = map.substring(1, map.length() - 1).split(",");
 				int start = Integer.parseInt(ra[0]);
 				int max = Integer.parseInt(ra[1]);
-				List<?> users = objectRepository.list(start, max+1);
+				PageList<?> users = objectRepository.list(start, max);
 
 				if (users.size() > 0) {
-					rsp.header("Content-Range", "item " + start + "-" + max + "/" + (start + users.size() + 2));
+					rsp.header("Content-Range", "item " + users.getStart() + "-" + users.getMax() + "/" + (users.getTotalSize()));
 				} else {
 					rsp.header("Content-Range", "item 0-0/0");
 				}
