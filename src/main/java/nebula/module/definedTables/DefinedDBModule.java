@@ -2,7 +2,6 @@ package nebula.module.definedTables;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.jdbi.v3.core.Jdbi;
 import org.jooby.Env;
 import org.jooby.Err;
 import org.jooby.Jooby;
-import org.jooby.Results;
 import org.jooby.Router;
 import org.jooby.Status;
 import org.slf4j.Logger;

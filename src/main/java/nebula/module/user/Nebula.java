@@ -17,6 +17,7 @@ import org.jooby.Status;
 import com.google.inject.Binder;
 import com.typesafe.config.Config;
 
+import nebula.data.jdbc.FieldList;
 import nebula.data.jdbc.FieldMapper;
 import nebula.data.jdbc.Repository;
 import nebula.data.jdbc.RepositoryFactory;
@@ -54,7 +55,7 @@ public class Nebula implements Jooby.Module {
 		Repository<T> objectRepository = repositoryFactory.getRepository(clazz);
 		objectRepository.init();
 
-		List<FieldMapper> fieldMappers = repositoryFactory.build(clazz);
+		FieldList fieldMappers = repositoryFactory.build(clazz);
 		List<Field> fields = new ArrayList<>();
 		for (FieldMapper c : fieldMappers) {
 			fields.add(new Field(c.getFieldName(), "TextInput"));
@@ -67,12 +68,14 @@ public class Nebula implements Jooby.Module {
 
 		router.path("/api/" + resourceName, () -> {
 			router.get((req, rsp) -> {
-				int start = req.param("start").intValue(0);
-				int max = req.param("max").intValue(20);
-				List<?> users = objectRepository.list(start, max);
+				String map = req.param("range").value();
+				String[] ra = map.substring(1, map.length() - 1).split(",");
+				int start = Integer.parseInt(ra[0]);
+				int max = Integer.parseInt(ra[1]);
+				List<?> users = objectRepository.list(start, max+1);
 
 				if (users.size() > 0) {
-					rsp.header("Content-Range", "item " + 0 + "-" + users.size() + "/" + users.size());
+					rsp.header("Content-Range", "item " + start + "-" + max + "/" + (start + users.size() + 2));
 				} else {
 					rsp.header("Content-Range", "item 0-0/0");
 				}
