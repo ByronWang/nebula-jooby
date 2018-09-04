@@ -29,7 +29,7 @@ public class PetDBMapperTest extends TestBase {
 	public void testConstructerEmpty() throws IOException {
 		String targetClazz = Pet.class.getName();
 
-		ClassBody cw = ClassBuilder.make(clazz).imPlements(RowMapper.class, targetClazz).body();
+		ClassBody cw = ClassBuilder.make(clazz).implement(RowMapper.class, targetClazz).body();
 
 		cw.constructerEmpty();
 
