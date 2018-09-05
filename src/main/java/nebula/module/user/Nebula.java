@@ -17,7 +17,7 @@ import org.jooby.Status;
 import com.google.inject.Binder;
 import com.typesafe.config.Config;
 
-import nebula.data.jdbc.FieldList;
+import nebula.data.jdbc.ClazzDefinition;
 import nebula.data.jdbc.FieldMapper;
 import nebula.data.jdbc.PageList;
 import nebula.data.jdbc.Repository;
@@ -53,12 +53,15 @@ public class Nebula implements Jooby.Module {
 	public <T> void require(Env env, Class<T> clazz) {
 		String resourceName = clazz.getSimpleName();
 		Router router = env.router();
-		Repository<T> objectRepository = repositoryFactory.getRepository(clazz);
+		ClazzDefinition clazzDefinition  = repositoryFactory.build(clazz);
+		
+		Class<T> clazzExtends = repositoryFactory.getClazzExtend(clazzDefinition);
+		
+		Repository<T> objectRepository = repositoryFactory.getRepository(clazzDefinition);
 		objectRepository.init();
 
-		FieldList fieldMappers = repositoryFactory.build(clazz);
 		List<Field> fields = new ArrayList<>();
-		for (FieldMapper c : fieldMappers) {
+		for (FieldMapper c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextInput"));
 		}
 		final DyncView view = new DyncView(fields.toArray(new Field[0]));
@@ -97,7 +100,7 @@ public class Nebula implements Jooby.Module {
 			router.put("/:id", req -> {
 				T inputObject;
 				try {
-					inputObject = req.body(clazz);
+					inputObject = req.body(clazzExtends);
 				} catch (Exception e) {
 					throw new Err(Status.BAD_REQUEST, "input data has bad format");
 				}
@@ -124,7 +127,7 @@ public class Nebula implements Jooby.Module {
 			router.put(req -> {
 				T inputObject;
 				try {
-					inputObject = req.body(clazz);
+					inputObject = req.body(clazzExtends);
 				} catch (Exception e) {
 					throw new Err(Status.BAD_REQUEST, "input data has bad format");
 				}
