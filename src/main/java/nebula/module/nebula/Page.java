@@ -1,4 +1,4 @@
-package nebula.module.user;
+package nebula.module.nebula;
 
 public class Page {
 	long id;

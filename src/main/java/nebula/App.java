@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 
 import nebula.module.dbTable.DbTableModule;
 import nebula.module.definedTables.DefinedDBModule;
+import nebula.module.nebula.Nebula;
+import nebula.module.nebula.UserModule;
 import nebula.module.pet.PetModule;
 import nebula.module.pet.PetRepository;
 import nebula.module.systemTables.SystemModule;
-import nebula.module.user.Nebula;
-import nebula.module.user.UserModule;
 import views.Resources;
 import views.ViewsModule;
 

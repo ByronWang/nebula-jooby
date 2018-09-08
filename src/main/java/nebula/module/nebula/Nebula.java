@@ -1,4 +1,4 @@
-package nebula.module.user;
+package nebula.module.nebula;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
