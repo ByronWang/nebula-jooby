@@ -7,6 +7,7 @@ import nebula.data.jdbc.ClazzDefinition;
 import nebula.data.jdbc.FieldList;
 import nebula.data.jdbc.FieldMapper;
 import nebula.data.query.Condition;
+import nebula.data.query.ConditionOp;
 
 public class ListUtil {
 
@@ -23,17 +24,27 @@ public class ListUtil {
 		FieldList fields = clazz.getFields();
 		Condition condition = Condition.empty();
 		while (m.find()) {
-			String name = m.group(1);
+			String[] namePairs = m.group(1).split("_");
+			String name = namePairs[0];
 			String value = m.group(2);
 			System.out.println(name + " " + value);
 			if (fields.containsKey(name)) {
-				FieldMapper field = fields.get(name);
-				if (field.getPojoClazz() == String.class) {
-					value = value.substring(1, value.length()-1).replace("\\\"", "\"");
-					condition = condition.and(Condition.field(name).contain(value));
+				FieldMapper f = fields.get(name);
+				if (f.getPojoClazz() == String.class) {
+					value = value.substring(1, value.length() - 1).replace("\\\"", "\"");
+					ConditionOp op = ConditionOp.CONTAIN;
+					if (namePairs.length > 1) op = ConditionOp.valueOf(namePairs[1].toUpperCase());
+					condition = condition.and(Condition.field(f.getColumn().getName()).condition(op, value));
 				} else {
-					condition = condition.and(Condition.field(name).eq(Integer.parseInt(value)));
+					condition = condition.and(Condition.field(f.getColumn().getName()).condition(ConditionOp.EQ, Integer.parseInt(value)));
 				}
+			} else if ("q".equals(name)) {
+				Condition conditionQ = Condition.empty();
+				value = value.substring(1, value.length() - 1).replace("\\\"", "\"");
+				for (FieldMapper f : fields.filter(f -> f.getPojoClazz() == String.class)) {
+					conditionQ = conditionQ.or(Condition.field(f.getColumn().getName()).condition(ConditionOp.CONTAIN, value));
+				}
+				condition = condition.and(conditionQ);
 			}
 		}
 		return condition;
