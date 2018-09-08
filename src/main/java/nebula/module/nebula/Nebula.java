@@ -22,6 +22,9 @@ import nebula.data.jdbc.FieldMapper;
 import nebula.data.jdbc.PageList;
 import nebula.data.jdbc.Repository;
 import nebula.data.jdbc.RepositoryFactory;
+import nebula.data.query.Condition;
+import nebula.data.query.OrderBy;
+import nebula.data.query.OrderByOp;
 import views.DyncView;
 import views.Field;
 
@@ -53,10 +56,10 @@ public class Nebula implements Jooby.Module {
 	public <T> void require(Env env, Class<T> clazz) {
 		String resourceName = clazz.getSimpleName();
 		Router router = env.router();
-		ClazzDefinition clazzDefinition  = repositoryFactory.build(clazz);
-		
+		ClazzDefinition clazzDefinition = repositoryFactory.build(clazz);
+
 		Class<T> clazzExtends = repositoryFactory.getClazzExtend(clazzDefinition);
-		
+
 		Repository<T> objectRepository = repositoryFactory.getRepository(clazzDefinition);
 		objectRepository.init();
 
@@ -72,11 +75,28 @@ public class Nebula implements Jooby.Module {
 
 		router.path("/api/" + resourceName, () -> {
 			router.get((req, rsp) -> {
+//				String filter = req.param("filter").value();// filter={}&range=[0,9]&sort=["lastModification","ASC"]
+				Condition condition = ListUtil.filter(clazzDefinition, req.param("filter").value());
+//				String[] strConditions = filter.substring(1, filter.length() - 1).split(",");
+//				for (String set : strConditions) {
+//					String[] sets = set.split(":");
+//					
+//				}
+
+				String sort = req.param("sort").value();
+				String[] aSort = sort.substring(1, sort.length() - 1).split(",");
+				String orderbyName = aSort[0];
+				orderbyName = orderbyName.substring(1, orderbyName.length() - 1);
+				String strOp = aSort[1];
+				strOp = strOp.substring(1, strOp.length() - 1);
+				OrderByOp op = OrderByOp.valueOf(strOp);
+				OrderBy orderBy = OrderBy.empty().andOrderBy(orderbyName, op);
+
 				String map = req.param("range").value();
 				String[] ra = map.substring(1, map.length() - 1).split(",");
 				int start = Integer.parseInt(ra[0]);
 				int max = Integer.parseInt(ra[1]);
-				PageList<?> users = objectRepository.list(start, max);
+				PageList<?> users = objectRepository.list(condition, orderBy, start, max);
 
 				if (users.size() > 0) {
 					rsp.header("Content-Range", "item " + users.getStart() + "-" + users.getMax() + "/" + (users.getTotalSize()));
