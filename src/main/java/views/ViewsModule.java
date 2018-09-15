@@ -99,7 +99,7 @@ public class ViewsModule implements Jooby.Module {
 					fields.add(new Field(c.getName().toLowerCase(), "TextInput"));
 				}
 
-				DyncView view = new DyncView(fields.toArray(new Field[0]));
+				Layout view = new Layout(fields.toArray(new Field[0]));
 				return view;
 			});
 		});

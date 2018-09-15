@@ -25,7 +25,7 @@ import nebula.data.jdbc.RepositoryFactory;
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
 import nebula.data.query.OrderByOp;
-import views.DyncView;
+import views.Layout;
 import views.Field;
 
 public class Nebula implements Jooby.Module {
@@ -54,43 +54,44 @@ public class Nebula implements Jooby.Module {
 	}
 
 	public <T> void require(Env env, Class<T> clazz) {
-		String resourceName = clazz.getSimpleName();
-		Router router = env.router();
 		ClazzDefinition clazzDefinition = repositoryFactory.build(clazz);
+		String resourceName = clazzDefinition.getName();
+		Router router = env.router();
 
-		Class<T> clazzExtends = repositoryFactory.getClazzExtend(clazzDefinition);
+		Class<T> actualClazz = repositoryFactory.actualClazz(clazzDefinition);
 
 		Repository<T> objectRepository = repositoryFactory.getRepository(clazzDefinition);
 		objectRepository.init();
 
-		List<Field> fields = new ArrayList<>();
-		for (FieldMapper c : clazzDefinition.getFields()) {
-			fields.add(new Field(c.getFieldName(), "TextInput"));
-		}
-		final DyncView view = new DyncView(fields.toArray(new Field[0]));
+		final Layout simpleListView = buildSimpleListView(clazzDefinition);
+		final Layout editView = buildEditView(clazzDefinition);
+		final Layout showView = buildShowView(clazzDefinition);
+		final Layout createView = buildCreateView(clazzDefinition);
 
 		router.get("/views/" + resourceName, (req) -> {
-			return view;
+			return simpleListView;
+		});
+		
+		router.get("/views/" + resourceName + "/list", (req) -> {
+			return simpleListView;
+		});
+		
+		router.get("/views/" + resourceName + "/edit", (req) -> {
+			return editView;
+		});
+		
+		router.get("/views/" + resourceName + "/show", (req) -> {
+			return showView;
+		});
+		
+		router.get("/views/" + resourceName + "/create", (req) -> {
+			return createView;
 		});
 
 		router.path("/api/" + resourceName, () -> {
 			router.get((req, rsp) -> {
-//				String filter = req.param("filter").value();// filter={}&range=[0,9]&sort=["lastModification","ASC"]
 				Condition condition = ListUtil.filter(clazzDefinition, req.param("filter").value());
-//				String[] strConditions = filter.substring(1, filter.length() - 1).split(",");
-//				for (String set : strConditions) {
-//					String[] sets = set.split(":");
-//					
-//				}
-
-				String sort = req.param("sort").value();
-				String[] aSort = sort.substring(1, sort.length() - 1).split(",");
-				String orderbyName = aSort[0];
-				orderbyName = orderbyName.substring(1, orderbyName.length() - 1);
-				String strOp = aSort[1];
-				strOp = strOp.substring(1, strOp.length() - 1);
-				OrderByOp op = OrderByOp.valueOf(strOp);
-				OrderBy orderBy = OrderBy.empty().andOrderBy(orderbyName, op);
+				OrderBy orderBy = orderby(clazzDefinition, req.param("sort").value());
 
 				String map = req.param("range").value();
 				String[] ra = map.substring(1, map.length() - 1).split(",");
@@ -120,7 +121,7 @@ public class Nebula implements Jooby.Module {
 			router.put("/:id", req -> {
 				T inputObject;
 				try {
-					inputObject = req.body(clazzExtends);
+					inputObject = req.body(actualClazz);
 				} catch (Exception e) {
 					throw new Err(Status.BAD_REQUEST, "input data has bad format");
 				}
@@ -147,7 +148,7 @@ public class Nebula implements Jooby.Module {
 			router.put(req -> {
 				T inputObject;
 				try {
-					inputObject = req.body(clazzExtends);
+					inputObject = req.body(actualClazz);
 				} catch (Exception e) {
 					throw new Err(Status.BAD_REQUEST, "input data has bad format");
 				}
@@ -167,5 +168,52 @@ public class Nebula implements Jooby.Module {
 				return Results.noContent();
 			});
 		});
+	}
+
+	private Layout buildCreateView(ClazzDefinition clazzDefinition) {
+		List<Field> fields = new ArrayList<>();
+		for (FieldMapper c : clazzDefinition.getFields()) {
+			fields.add(new Field(c.getFieldName(), "TextInput"));
+		}
+		final Layout view = new Layout(fields.toArray(new Field[0]));
+		return view;
+	}
+
+	private Layout buildShowView(ClazzDefinition clazzDefinition) {
+		List<Field> fields = new ArrayList<>();
+		for (FieldMapper c : clazzDefinition.getFields()) {
+			fields.add(new Field(c.getFieldName(), "TextField"));
+		}
+		final Layout view = new Layout(fields.toArray(new Field[0]));
+		return view;
+	}
+
+	private Layout buildEditView(ClazzDefinition clazzDefinition) {
+		List<Field> fields = new ArrayList<>();
+		for (FieldMapper c : clazzDefinition.getFields()) {
+			fields.add(new Field(c.getFieldName(), "TextInput"));
+		}
+		final Layout view = new Layout(fields.toArray(new Field[0]));
+		return view;
+	}
+
+	private Layout buildSimpleListView(ClazzDefinition clazzDefinition) {
+		List<Field> fields = new ArrayList<>();
+		for (FieldMapper c : clazzDefinition.getFields()) {
+			fields.add(new Field(c.getFieldName(), "TextField"));
+		}
+		final Layout view = new Layout(fields.toArray(new Field[0]));
+		return view;
+	}
+
+	private OrderBy orderby(ClazzDefinition clazzDefinition, String sort) {
+		String[] aSort = sort.substring(1, sort.length() - 1).split(",");
+		String orderbyName = aSort[0];
+		orderbyName = orderbyName.substring(1, orderbyName.length() - 1);
+		String strOp = aSort[1];
+		strOp = strOp.substring(1, strOp.length() - 1);
+		OrderByOp op = OrderByOp.valueOf(strOp);
+		OrderBy orderBy = OrderBy.empty().andOrderBy(orderbyName, op);
+		return orderBy;
 	}
 }

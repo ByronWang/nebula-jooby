@@ -1,6 +1,6 @@
 package views;
 
-public class DyncView {
+public class Layout {
 	private Field[] fields;
 
 	public Field[] getFields() {
@@ -8,7 +8,7 @@ public class DyncView {
 	}
 
 
-	public DyncView(Field[] fields) {
+	public Layout(Field[] fields) {
 		super();
 		this.fields = fields;
 	}
