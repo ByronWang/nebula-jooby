@@ -1,10 +1,8 @@
-package com.intellij.psi;
+package nebula.intellij.util.name;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-
-import com.intellij.util.xml.DbNameStrategy;
 
 public class DBNameStrategyTest {
 

@@ -1,4 +1,4 @@
-package com.intellij.psi;
+package nebula.intellij.util.name;
 
 import static org.junit.Assert.assertEquals;
 

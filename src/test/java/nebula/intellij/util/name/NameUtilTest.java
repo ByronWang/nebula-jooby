@@ -2,6 +2,8 @@ package nebula.intellij.util.name;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import nebula.intellij.util.name.NameUtil;
@@ -75,4 +77,38 @@ public class NameUtilTest {
 
 	}
 
+	  @Test
+	  public void testSplitIntoWords1() {
+	    assertSplitEquals(new String[]{"I", "Base"}, "IBase");
+	  }
+
+	  @Test
+	  public void testSplitIntoWords2() {
+	    assertSplitEquals(new String[]{"Order", "Index"}, "OrderIndex");
+	  }
+
+	  @Test
+	  public void testSplitIntoWords3() {
+	    assertSplitEquals(new String[]{"order", "Index"}, "orderIndex");
+	  }
+
+	  @Test
+	  public void testSplitIntoWords4() {
+	    assertSplitEquals(new String[]{"Order", "Index"}, "Order_Index");
+	  }
+
+	  @Test
+	  public void testSplitIntoWords5() {
+	    assertSplitEquals(new String[]{"ORDER", "INDEX"}, "ORDER_INDEX");
+	  }
+
+	  @Test
+	  public void testSplitIntoWords6() {
+	    assertSplitEquals(new String[]{"gg", "J"}, "ggJ");
+	  }
+
+	  private static void assertSplitEquals(String[] expected, String name) {
+	    final String[] result = NameUtil.splitNameIntoWords(name);
+	    assertEquals(Arrays.asList(expected).toString(), Arrays.asList(result).toString());
+	  }
 }

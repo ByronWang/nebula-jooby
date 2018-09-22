@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.util.xml;
+package nebula.intellij.util.name;
 
 import nebula.intellij.util.name.DomNameStrategy;
 import nebula.intellij.util.name.NameUtil;
