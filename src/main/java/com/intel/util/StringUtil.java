@@ -31,7 +31,6 @@ import com.intel.annotations.Nullable;
 import com.intel.util.text.CharFilter;
 import com.intel.util.text.LineColumn;
 import com.intel.util.text.TextRange;
-import com.intellij.util.NotNullFunction;
 import com.intellij.util.text.CharSequenceSubSequence;
 import com.intellij.util.text.MergingCharSequence;
 
@@ -90,22 +89,22 @@ public class StringUtil extends StringUtilRt {
 	}
 
 	private static final MyHtml2Text html2TextParser = new MyHtml2Text();
-
-	public static final NotNullFunction<String, String> QUOTER = new NotNullFunction<String, String>() {
-		@Override
-		@NotNull
-		public String apply(String s) {
-			return "\"" + s + "\"";
-		}
-	};
-
-	public static final NotNullFunction<String, String> SINGLE_QUOTER = new NotNullFunction<String, String>() {
-		@Override
-		@NotNull
-		public String apply(String s) {
-			return "'" + s + "'";
-		}
-	};
+//
+//	public static final NotNullFunction<String, String> QUOTER = new NotNullFunction<String, String>() {
+//		@Override
+//		@NotNull
+//		public String apply(String s) {
+//			return "\"" + s + "\"";
+//		}
+//	};
+//
+//	public static final NotNullFunction<String, String> SINGLE_QUOTER = new NotNullFunction<String, String>() {
+//		@Override
+//		@NotNull
+//		public String apply(String s) {
+//			return "'" + s + "'";
+//		}
+//	};
 
 	@NotNull
 	@Contract(pure = true)
@@ -549,19 +548,19 @@ public class StringUtil extends StringUtilRt {
 		return false;
 	}
 
-	@NotNull
-	@Contract(pure = true)
-	public static NotNullFunction<String, String> escaper(final boolean escapeSlash, @Nullable final String additionalChars) {
-		return new NotNullFunction<String, String>() {
-			@NotNull
-			@Override
-			public String apply(@NotNull String dom) {
-				final StringBuilder builder = new StringBuilder(dom.length());
-				escapeStringCharacters(dom.length(), dom, additionalChars, escapeSlash, builder);
-				return builder.toString();
-			}
-		};
-	}
+//	@NotNull
+//	@Contract(pure = true)
+//	public static NotNullFunction<String, String> escaper(final boolean escapeSlash, @Nullable final String additionalChars) {
+//		return new NotNullFunction<String, String>() {
+//			@NotNull
+//			@Override
+//			public String apply(@NotNull String dom) {
+//				final StringBuilder builder = new StringBuilder(dom.length());
+//				escapeStringCharacters(dom.length(), dom, additionalChars, escapeSlash, builder);
+//				return builder.toString();
+//			}
+//		};
+//	}
 
 	public static void escapeStringCharacters(int length, @NotNull String str, @NotNull StringBuilder buffer) {
 		escapeStringCharacters(length, str, "\"", buffer);
