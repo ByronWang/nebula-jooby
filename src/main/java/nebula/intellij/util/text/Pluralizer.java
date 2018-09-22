@@ -146,12 +146,12 @@ class Pluralizer {
 
   @Nullable
   public String plural(@Nullable String word) {
-    return restoreCase(word, replaceWord(word, irregularSingles, irregularPlurals, pluralRules));
+    return restoreCase(word, replaceWord(word.toLowerCase(), irregularSingles, irregularPlurals, pluralRules));
   }
 
   @Nullable
   public String singular(@Nullable String word) {
-    return restoreCase(word, replaceWord(word, irregularPlurals, irregularSingles, singularRules));
+    return restoreCase(word, replaceWord(word.toLowerCase(), irregularPlurals, irregularSingles, singularRules));
   }
 
   private static Pattern sanitizeRule(String rule) {

@@ -1,29 +1,20 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package nebula.intellij.util.text;
 
-import nebula.intellij.util.Comparing;
-import nebula.intellij.util.annotations.NotNull;
-import nebula.intellij.util.container.ContainerUtil;
-import nebula.intellij.util.text.LineColumn;
-import nebula.intellij.util.text.LineSeparator;
-import nebula.intellij.util.text.NaturalComparator;
-import nebula.intellij.util.text.StringUtil;
-import nebula.intellij.util.text.TextRange;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
-import java.nio.CharBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
-/**
- * @author Eugene Zhuravlev
- * @since Dec 22, 2006
- */
-@SuppressWarnings("ResultOfMethodCallIgnored")
+import nebula.intellij.util.Comparing;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.container.ContainerUtil;
+
 public class StringUtilTest {
   @Test
   public void testTrimLeadingChar() {
@@ -120,7 +111,7 @@ public class StringUtilTest {
     assertEquals("search", StringUtil.unpluralize("searches"));
     assertEquals("process", StringUtil.unpluralize("process"));
     assertEquals("PROPERTY", StringUtil.unpluralize("PROPERTIES"));
-//    assertEquals("THIS", StringUtil.unpluralize("THESE"));
+    assertEquals("THIS", StringUtil.unpluralize("THESE"));
     assertEquals("database", StringUtil.unpluralize("databases"));
     assertEquals("basis", StringUtil.unpluralize("bases"));
   }
@@ -137,14 +128,17 @@ public class StringUtilTest {
     assertEquals("stashes", StringUtil.pluralize("stash"));
     assertEquals("children", StringUtil.pluralize("child"));
     assertEquals("leaves", StringUtil.pluralize("leaf"));
-//    assertEquals("These", StringUtil.pluralize("This"));
+    assertEquals("stomata", StringUtil.pluralize("stoma"));
+    assertEquals("tornadoes", StringUtil.pluralize("tornado"));
+    assertEquals("feet", StringUtil.pluralize("foot"));
+    assertEquals("these", StringUtil.pluralize("this"));
     assertEquals("cookies", StringUtil.pluralize("cookie"));
     assertEquals("VaLuES", StringUtil.pluralize("VaLuE"));
     assertEquals("PLANS", StringUtil.pluralize("PLAN"));
     assertEquals("stackTraceLineExes", StringUtil.pluralize("stackTraceLineEx"));
     assertEquals("schemas", StringUtil.pluralize("schema")); // anglicized version
     assertEquals("PROPERTIES", StringUtil.pluralize("PROPERTY"));
-//    assertEquals("THESE", StringUtil.pluralize("THIS"));
+    assertEquals("THESE", StringUtil.pluralize("THIS"));
     assertEquals("databases", StringUtil.pluralize("database"));
     assertEquals("bases", StringUtil.pluralize("base"));
     assertEquals("bases", StringUtil.pluralize("basis"));
@@ -285,7 +279,6 @@ public class StringUtilTest {
     assertEquals("\"foo\'", StringUtil.unquoteString("\"foo\'"));
   }
 
-  @SuppressWarnings("SSBasedInspection")
   @Test
   public void testStripQuotesAroundValue() {
     assertEquals("", StringUtil.stripQuotesAroundValue(""));
@@ -368,6 +361,28 @@ public class StringUtilTest {
 //    assertThat("/someTextBefore/tmp/filename").isEqualTo(StringUtil.replace("/someTextBefore/$PROJECT_FILE$/filename", Collections.singletonList("$PROJECT_FILE$"), Collections.singletonList("tmp")));
 //  }
 
+//  @Test
+//  public void testReplaceReturnReplacementIfTextEqualsToReplacedText() {
+//    String newS = "/tmp";
+//    assertThat(newS).isSameAs(StringUtil.replace("$PROJECT_FILE$", "$PROJECT_FILE$".toLowerCase().toUpperCase() /* ensure new String instance */, newS));
+//  }
+//
+//  @Test
+//  public void testReplace() {
+//    assertThat("/tmp/filename").isEqualTo(StringUtil.replace("$PROJECT_FILE$/filename", "$PROJECT_FILE$", "/tmp"));
+//  }
+//
+//  @Test
+//  public void testReplaceListOfChars() {
+//    assertThat("/tmp/filename").isEqualTo(StringUtil.replace("$PROJECT_FILE$/filename", Collections.singletonList("$PROJECT_FILE$"), Collections.singletonList("/tmp")));
+//    assertThat("/someTextBefore/tmp/filename").isEqualTo(StringUtil.replace("/someTextBefore/$PROJECT_FILE$/filename", Collections.singletonList("$PROJECT_FILE$"), Collections.singletonList("tmp")));
+//  }
+//
+//  @Test
+//  public void testReplaceReturnTheSameStringIfNothingToReplace() {
+//    String s = "/tmp/filename";
+//    assertThat(StringUtil.replace(s, "$PROJECT_FILE$/filename", "$PROJECT_FILE$")).isSameAs(s);
+//  }
 
   @Test
   public void testEqualsIgnoreWhitespaces() {
@@ -522,7 +537,6 @@ public class StringUtilTest {
     assertEquals("", StringUtil.getPackageName("Number"));
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testIndexOf_1() {
     char[] chars = new char[]{'a','b','c','d','a','b','c','d','A','B','C','D'};
@@ -532,14 +546,14 @@ public class StringUtilTest {
     assertEquals(2, StringUtil.indexOf(chars, 'c', -42, 99, false));
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
+
   @Test
   public void testIndexOf_2() {
     assertEquals(1, StringUtil.indexOf("axaxa", 'x', 0, 5));
     assertEquals(2, StringUtil.indexOf("abcd", 'c', -42, 99));
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
+
   @Test
   public void testIndexOf_3() {
     assertEquals(1, StringUtil.indexOf("axaXa", 'x', 0, 5, false));
@@ -547,7 +561,6 @@ public class StringUtilTest {
     assertEquals(2, StringUtil.indexOf("abcd", 'c', -42, 99, false));
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testIndexOfAny() {
     assertEquals(1, StringUtil.indexOfAny("axa", "x", 0, 5));
@@ -555,7 +568,6 @@ public class StringUtilTest {
     assertEquals(2, StringUtil.indexOfAny("abcd", "c", -42, 99));
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testLastIndexOf() {
     assertEquals(1, StringUtil.lastIndexOf("axaxa", 'x', 0, 2));
