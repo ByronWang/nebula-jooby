@@ -32,13 +32,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Comparing;
-import com.intel.util.Condition;
 import com.intel.util.Function;
-import com.intel.util.Pair;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import nebula.intellij.util.Comparing;
+import nebula.intellij.util.Condition;
+import nebula.intellij.util.Pair;
 
 @SuppressWarnings({"UtilityClassWithoutPrivateConstructor", "MethodOverridesStaticMethodOfSuperclass"})
 public class ContainerUtil extends ContainerUtilRt {

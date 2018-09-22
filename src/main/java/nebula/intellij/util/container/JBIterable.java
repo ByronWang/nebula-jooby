@@ -7,7 +7,8 @@ import java.util.Iterator;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Consumer;
+
+import nebula.intellij.util.Consumer;
 
 /**
  * An in-house and immutable version of {@code com.google.common.collect.FluentIterable}

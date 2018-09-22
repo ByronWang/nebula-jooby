@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intel.util;
+package nebula.intellij.util;
 
 /**
  * Returns {@code true} or {@code false} for the given input object.

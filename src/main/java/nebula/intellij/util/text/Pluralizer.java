@@ -27,9 +27,9 @@ package nebula.intellij.util.text;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Consumer;
-import com.intel.util.Pair;
 
+import nebula.intellij.util.Consumer;
+import nebula.intellij.util.Pair;
 import nebula.intellij.util.container.ContainerUtil;
 import nebula.intellij.util.container.JBIterable;
 

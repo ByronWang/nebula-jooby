@@ -1,10 +1,11 @@
 // Copyright 2000-2017 JetBrains s.r.o.
 // Use of this source code is governed by the Apache 2.0 license that can be
 // found in the LICENSE file.
-package com.intel.util;
+package nebula.intellij.util;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
+import com.intel.util.Function;
 
 public class Pair<A, B> {
   public final A first;

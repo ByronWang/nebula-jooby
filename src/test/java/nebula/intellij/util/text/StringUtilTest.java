@@ -2,8 +2,8 @@
 package nebula.intellij.util.text;
 
 import com.intel.annotations.NotNull;
-import com.intel.util.Comparing;
 
+import nebula.intellij.util.Comparing;
 import nebula.intellij.util.container.ContainerUtil;
 import nebula.intellij.util.text.LineColumn;
 import nebula.intellij.util.text.LineSeparator;

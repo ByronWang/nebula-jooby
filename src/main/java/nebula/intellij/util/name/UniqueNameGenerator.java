@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intel.util;
+package nebula.intellij.util.name;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 
 import gnu.trove.set.hash.THashSet;
+import nebula.intellij.util.Condition;
 import nebula.intellij.util.text.StringUtil;
 
 import java.util.Collection;

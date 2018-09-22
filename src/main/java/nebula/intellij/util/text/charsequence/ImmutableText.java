@@ -29,7 +29,6 @@ package nebula.intellij.util.text.charsequence;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.ArrayUtil;
 
 import nebula.intellij.util.text.StringUtil;
 
@@ -149,7 +148,7 @@ final class ImmutableText extends ImmutableCharSequence implements CharArrayExte
     return new CompositeNode(nodeOf(node, offset, half), nodeOf(node, offset + half, length - half));
   }
 
-  private static final LeafNode EMPTY_NODE = new Leaf8BitNode(ArrayUtil.EMPTY_BYTE_ARRAY);
+  private static final LeafNode EMPTY_NODE = new Leaf8BitNode(new byte[0]);
   private static final ImmutableText EMPTY = new ImmutableText(EMPTY_NODE);
 
   /**

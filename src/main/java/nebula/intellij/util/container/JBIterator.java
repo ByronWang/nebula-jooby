@@ -17,9 +17,9 @@ package nebula.intellij.util.container;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Condition;
 import com.intel.util.Function;
 
+import nebula.intellij.util.Condition;
 import nebula.intellij.util.text.StringUtil;
 
 import java.util.Collections;
