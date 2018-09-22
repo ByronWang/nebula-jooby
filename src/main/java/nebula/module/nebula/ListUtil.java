@@ -27,12 +27,11 @@ public class ListUtil {
 			String[] namePairs = m.group(1).split("_");
 			String name = namePairs[0];
 			String value = m.group(2);
-			System.out.println(name + " " + value);
 			if (fields.containsKey(name)) {
 				FieldMapper f = fields.get(name);
 				if (f.getPojoClazz() == String.class) {
 					value = value.substring(1, value.length() - 1).replace("\\\"", "\"");
-					ConditionOp op = ConditionOp.CONTAIN;
+					ConditionOp op = ConditionOp.EQ;
 					if (namePairs.length > 1) op = ConditionOp.valueOf(namePairs[1].toUpperCase());
 					condition = condition.and(Condition.field(f.getColumn().getName()).condition(op, value));
 				} else {

@@ -28,7 +28,15 @@ public class Pet {
 
 	@Override
 	public String toString() {
-		return "Pet [id=" + id + ", name=" + name + ", desciption=" + desciption + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Pet [id=")
+			.append(id)
+			.append(", name=")			
+			.append(name)
+			.append(", desciption=")
+			.append(desciption)
+			.append("]");
+		return builder.toString();
 	}
-	
+
 }

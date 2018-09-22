@@ -25,11 +25,11 @@ public class ListUtilTest {
 		ClazzDefinition clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(),
 				clazzFields);
 
-		assertEquals("name = 'myname'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"myname\"}")));
-//		assertEquals("name = 'my\"name'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"my\\\"name\"}")));
-		assertEquals("name = '34'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"34\",\"q\":\"er\"}")));
-		assertEquals("name = '34' AND age = 15", str(ListUtil.filter(clazzDefinition, " {\"name\":\"34\",\"age\":15}")));
-//		assertEquals("name = '34'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"34\",\"q\":\"er\",\"q\":\"er\",\"q\":\"er\",\"q\":\"er\"}")));
+		assertEquals("NAME = 'myname'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"myname\"}")));
+//		assertEquals("NAME = 'my\"name'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"my\\\"name\"}")));
+		assertEquals("NAME = '34' AND (NAME LIKE '%er%' OR description LIKE '%er%')", str(ListUtil.filter(clazzDefinition, " {\"name\":\"34\",\"q\":\"er\"}")));
+		assertEquals("NAME = '34' AND age = 15", str(ListUtil.filter(clazzDefinition, " {\"name\":\"34\",\"age\":15}")));
+//		assertEquals("NAME = '34'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"34\",\"q\":\"er\",\"q\":\"er\",\"q\":\"er\",\"q\":\"er\"}")));
 	}
 
 	private String str(Condition c) {
