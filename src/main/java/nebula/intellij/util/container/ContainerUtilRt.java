@@ -38,7 +38,7 @@ import nebula.intellij.util.Pair;
  *
  * @since 12.0
  */
-@SuppressWarnings("UtilityClassWithoutPrivateConstructor")
+@SuppressWarnings("unchecked")
 public class ContainerUtilRt {
 	private static final int ARRAY_COPY_THRESHOLD = 20;
 
@@ -85,12 +85,14 @@ public class ContainerUtilRt {
 		return new java.util.HashMap<K, V>(initialCapacity);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@NotNull
 	@Contract(value = " -> new", pure = true)
 	public static <K extends Comparable, V> TreeMap<K, V> newTreeMap() {
 		return new TreeMap<K, V>();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@NotNull
 	@Contract(value = "_ -> new", pure = true)
 	public static <K extends Comparable, V> TreeMap<K, V> newTreeMap(@NotNull Map<? extends K, ? extends V> map) {
@@ -201,7 +203,7 @@ public class ContainerUtilRt {
 	@Contract(value = "_ -> new", pure = true)
 	public static <T> HashSet<T> newHashSet(@NotNull Iterable<? extends T> elements) {
 		if (elements instanceof Collection) {
-			@SuppressWarnings("unchecked")
+			
 			Collection<? extends T> collection = (Collection<? extends T>) elements;
 			return new java.util.HashSet<T>(collection);
 		}
@@ -232,7 +234,7 @@ public class ContainerUtilRt {
 	@Contract(value = "_ -> new", pure = true)
 	public static <T> LinkedHashSet<T> newLinkedHashSet(@NotNull Iterable<? extends T> elements) {
 		if (elements instanceof Collection) {
-			@SuppressWarnings("unchecked")
+			
 			Collection<? extends T> collection = (Collection<? extends T>) elements;
 			return new LinkedHashSet<T>(collection);
 		}
@@ -278,6 +280,7 @@ public class ContainerUtilRt {
 	private static class EmptyList<T> extends AbstractList<T> implements RandomAccess, Serializable {
 		private static final long serialVersionUID = 1L;
 
+		@SuppressWarnings("rawtypes")
 		private static final EmptyList INSTANCE = new EmptyList();
 
 		@Override
@@ -327,6 +330,7 @@ public class ContainerUtilRt {
 			return true;
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		@Contract(pure = true)
 		public boolean equals(Object o) {

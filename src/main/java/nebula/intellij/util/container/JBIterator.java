@@ -134,7 +134,8 @@ public abstract class JBIterator<E> implements Iterator<E> {
   /**
    * Returns the current element if any; otherwise throws exception.
    */
-  public final E current() {
+  @SuppressWarnings("unchecked")
+public final E current() {
     if (myCurrent == Do.INIT) {
       throw new NoSuchElementException();
     }
@@ -192,7 +193,8 @@ public abstract class JBIterator<E> implements Iterator<E> {
     return addOp(true, new SkipOp<E>(condition));
   }
 
-  @NotNull
+  @SuppressWarnings("unchecked")
+@NotNull
   private <T> T addOp(boolean last, @NotNull Op op) {
     if (op.impl == null) {
       myFirstOp = myLastOp = op;
@@ -233,7 +235,8 @@ public abstract class JBIterator<E> implements Iterator<E> {
 
   private static class Op<T> {
     final T impl;
-    Op nextOp;
+    @SuppressWarnings("rawtypes")
+	Op nextOp;
 
     Op(T impl) {
       this.impl = impl;
@@ -273,23 +276,27 @@ public abstract class JBIterator<E> implements Iterator<E> {
     }
   }
 
-  private class FilterOp<E> extends Op<Condition<? super E>> {
+  @SuppressWarnings("hiding")
+private class FilterOp<E> extends Op<Condition<? super E>> {
     FilterOp(Condition<? super E> condition) {
       super(condition);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     Object apply(Object o) {
       return impl.value((E)o) ? o : skip();
     }
   }
 
-  private class WhileOp<E> extends Op<Condition<? super E>> {
+  @SuppressWarnings("hiding")
+private class WhileOp<E> extends Op<Condition<? super E>> {
 
     WhileOp(Condition<? super E> condition) {
       super(condition);
     }
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     Object apply(Object o) {
       return impl.value((E)o) ? o : stop();
     }
@@ -302,7 +309,8 @@ public abstract class JBIterator<E> implements Iterator<E> {
       super(condition);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     Object apply(Object o) {
       if (active && impl.value((E)o)) return skip();
       active = false;

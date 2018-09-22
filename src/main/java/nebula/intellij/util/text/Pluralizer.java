@@ -27,6 +27,7 @@ package nebula.intellij.util.text;
 
 import static nebula.intellij.util.text.StringUtil.notNullize;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

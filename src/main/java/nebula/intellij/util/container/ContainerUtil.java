@@ -40,10 +40,11 @@ import nebula.intellij.util.Comparing;
 import nebula.intellij.util.Condition;
 import nebula.intellij.util.Pair;
 
+@SuppressWarnings("unchecked")
 public class ContainerUtil extends ContainerUtilRt {
 	private static final int INSERTION_SORT_THRESHOLD = 10;
 
-	@SuppressWarnings("unchecked")
+	
 	@NotNull
 	@Contract(pure = true)
 	public static <T> T[] ar(@NotNull T... elements) {
@@ -74,12 +75,14 @@ public class ContainerUtil extends ContainerUtilRt {
 		return ContainerUtilRt.newHashMap(keys, values);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@NotNull
 	@Contract(pure = true)
 	public static <K extends Comparable, V> TreeMap<K, V> newTreeMap() {
 		return ContainerUtilRt.newTreeMap();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@NotNull
 	@Contract(pure = true)
 	public static <K extends Comparable, V> TreeMap<K, V> newTreeMap(@NotNull Map<? extends K, ? extends V> map) {
@@ -705,7 +708,7 @@ public class ContainerUtil extends ContainerUtilRt {
 	public static <T, V> V[] map2Array(@NotNull Collection<? extends T> collection, @NotNull Class<? super V> aClass,
 			@NotNull Function<T, V> mapper) {
 		final List<V> list = map2List(collection, mapper);
-		@SuppressWarnings("unchecked")
+		
 		V[] array = (V[]) Array.newInstance(aClass, list.size());
 		return list.toArray(array);
 	}
@@ -970,7 +973,7 @@ public class ContainerUtil extends ContainerUtilRt {
 	@NotNull
 	@Contract(pure = true)
 	public static <T> List<T> concat(@NotNull final List<List<? extends T>> lists) {
-		@SuppressWarnings("unchecked")
+		
 		List<? extends T>[] array = lists.toArray(new List[0]);
 		return concat(array);
 	}
@@ -1749,7 +1752,7 @@ public class ContainerUtil extends ContainerUtilRt {
 	@NotNull
 	public static <K, V> V[] convert(@NotNull K[] from, @NotNull V[] to, @NotNull Function<K, V> fun) {
 		if (to.length < from.length) {
-			@SuppressWarnings("unchecked")
+			
 			V[] array = (V[]) Array.newInstance(to.getClass().getComponentType(), from.length);
 			to = array;
 		}
@@ -1843,6 +1846,7 @@ public class ContainerUtil extends ContainerUtilRt {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Contract("null -> null; !null -> !null")
 	public static <T> List<T> trimToSize(@Nullable List<T> list) {
 		if (list == null) return null;
@@ -1929,6 +1933,7 @@ public class ContainerUtil extends ContainerUtilRt {
 		return ContainerUtilRt.isEmpty(collection);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Contract(value = "null -> true", pure = true)
 	public static boolean isEmpty(@Nullable Map map) {
 		return map == null || map.isEmpty();

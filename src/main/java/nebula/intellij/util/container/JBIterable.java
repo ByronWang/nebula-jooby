@@ -46,6 +46,7 @@ import com.intel.annotations.Nullable;
  *
  * @noinspection unchecked
  */
+@SuppressWarnings("unchecked")
 public abstract class JBIterable<E> implements Iterable<E> {
 
   /**
@@ -83,7 +84,8 @@ public abstract class JBIterable<E> implements Iterable<E> {
    * Returns a {@code JBIterable} that wraps {@code iterable}, or {@code iterable} itself if it
    * is already a {@code JBIterable}.
    */
-  @NotNull
+  @SuppressWarnings("rawtypes")
+@NotNull
   public static <E> JBIterable<E> from(@Nullable Iterable<? extends E> iterable) {
     if (iterable == null || iterable == EMPTY) return empty();
     if (iterable instanceof JBIterable) return (JBIterable<E>)iterable;
@@ -108,28 +110,28 @@ public abstract class JBIterable<E> implements Iterable<E> {
     return elements == null || elements.length == 0 ? JBIterable.<E>empty() : from(ContainerUtilRt.newArrayList(elements));
   }
 
+  @SuppressWarnings("rawtypes")
   private static final JBIterable EMPTY = new Empty();
 
+  @SuppressWarnings("rawtypes")
   private static final class Empty extends JBIterable {
-    @Override
+	@Override
     public Iterator iterator() {
       return new Iterator() {
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
 		public Object next() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 	};
     }
   }
 
-  @NotNull
+@NotNull
   public static <E> JBIterable<E> empty() {
     return (JBIterable<E>)EMPTY;
   }
