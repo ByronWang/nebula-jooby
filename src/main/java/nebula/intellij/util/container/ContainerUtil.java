@@ -32,14 +32,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-//import com.intellij.openapi.util.Couple;
-//import com.intellij.openapi.util.Factory;
-//import com.intellij.util.Consumer;
-//import com.intellij.util.NullableFunction;
-//import com.intellij.util.Processor;
-//import com.intellij.util.containers.SequenceIterator;
-import com.intel.util.ArrayFactory;
-import com.intel.util.ArrayUtil;
 import com.intel.util.Comparing;
 import com.intel.util.Condition;
 import com.intel.util.Function;
@@ -1198,23 +1190,6 @@ public class ContainerUtil extends ContainerUtilRt {
     return set.isEmpty() ? ContainerUtil.<T>emptyList() : set;
   }
 
-  @NotNull
-  @Contract(pure=true)
-  public static <T> T[] toArray(@Nullable Collection<T> c, @NotNull ArrayFactory<T> factory) {
-    return c != null ? c.toArray(factory.create(c.size())) : factory.create(0);
-  }
-
-  @NotNull
-  @Contract(pure=true)
-  public static <T> T[] toArray(@NotNull Collection<? extends T> c1, @NotNull Collection<? extends T> c2, @NotNull ArrayFactory<T> factory) {
-    return ArrayUtil.mergeCollections(c1, c2, factory);
-  }
-
-  @NotNull
-  @Contract(pure=true)
-  public static <T> T[] mergeCollectionsToArray(@NotNull Collection<? extends T> c1, @NotNull Collection<? extends T> c2, @NotNull ArrayFactory<T> factory) {
-    return ArrayUtil.mergeCollections(c1, c2, factory);
-  }
 
   public static <T extends Comparable<T>> void sort(@NotNull List<T> list) {
     int size = list.size();
@@ -1924,17 +1899,6 @@ public class ContainerUtil extends ContainerUtilRt {
   @Contract(pure=true)
   public static <T> T[] toArray(@NotNull Collection<T> c, @NotNull T[] sample) {
     return ContainerUtilRt.toArray(c, sample);
-  }
-
-  @NotNull
-  public static <T> T[] copyAndClear(@NotNull Collection<T> collection, @NotNull ArrayFactory<? extends T> factory, boolean clear) {
-    int size = collection.size();
-    T[] a = factory.create(size);
-    if (size > 0) {
-      a = collection.toArray(a);
-      if (clear) collection.clear();
-    }
-    return a;
   }
 
 

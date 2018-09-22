@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.nebula.util.xml.JavaNameStrategy;
+import nebula.intellij.util.name.JavaNameStrategy;
 
 public class JavaNameStrategyTest {
 

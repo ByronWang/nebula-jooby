@@ -16,14 +16,5 @@ public class ArrayUtil {
 		return a;
 	}
 
-	public static int[] realloc(int[] data, int i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public static <T> T[] mergeCollections(Collection<? extends T> c1, Collection<? extends T> c2, ArrayFactory<T> factory) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

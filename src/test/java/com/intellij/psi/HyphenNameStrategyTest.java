@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.nebula.util.xml.HyphenNameStrategy;
+import nebula.intellij.util.name.HyphenNameStrategy;
 
 public class HyphenNameStrategyTest {
 

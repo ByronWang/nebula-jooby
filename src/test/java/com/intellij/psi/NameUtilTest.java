@@ -17,7 +17,7 @@ package com.intellij.psi;
 
 import org.junit.Test;
 
-import com.intel.util.NameUtil;
+import nebula.intellij.util.name.NameUtil;
 
 import java.util.Arrays;
 

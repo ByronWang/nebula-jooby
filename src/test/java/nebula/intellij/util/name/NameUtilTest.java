@@ -1,10 +1,10 @@
-package com.intel.util;
+package nebula.intellij.util.name;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.intel.util.NameUtil;
+import nebula.intellij.util.name.NameUtil;
 
 public class NameUtilTest {
 

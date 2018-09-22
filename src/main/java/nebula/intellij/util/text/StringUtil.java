@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.NaturalComparator;
 import com.intel.util.Pair;
 
 import nebula.intellij.util.container.ContainerUtil;

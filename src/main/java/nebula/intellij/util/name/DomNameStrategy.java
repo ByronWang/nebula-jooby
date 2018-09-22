@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.nebula.util.xml;
+package nebula.intellij.util.name;
 
 /**
  * Specifies how method names are converted into XML element names

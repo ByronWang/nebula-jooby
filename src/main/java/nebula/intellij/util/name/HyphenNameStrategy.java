@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.nebula.util.xml;
-
-import com.intel.util.Function;
-import com.intel.util.NameUtil;
+package nebula.intellij.util.name;
 
 import nebula.intellij.util.text.StringUtil;
 
-import java.util.Arrays;
-
 /**
- * This strategy decapitalizes property name, e.g. getXmlElementName() will correspond to xmlElementName
+ * This strategy splits property name into words, decapitalizes them and joins using hyphen as separator,
+ * e.g. getXmlElementName() will correspond to xml-element-name
  *
  * @author peter
  */
-public class JavaNameStrategy extends DomNameStrategy {
-  public static final Function<String,String> DECAPITALIZE_FUNCTION = s -> StringUtil.decapitalize(s);
-
+public class HyphenNameStrategy extends DomNameStrategy {
   @Override
-  public final String convertName(String propertyName) {
-    return StringUtil.decapitalize(propertyName);
+  public String convertName(String propertyName) {
+    final String[] words = NameUtil.nameToWords(propertyName);
+    for (int i = 0; i < words.length; i++) {
+      words[i] = StringUtil.decapitalize(words[i]);
+    }
+    return StringUtil.join(words, "-");
   }
 
   @Override
-  public final String splitIntoWords(final String tagName) {
-    return StringUtil.join(Arrays.asList(NameUtil.nameToWords(tagName)), DECAPITALIZE_FUNCTION, " ");
+  public String splitIntoWords(final String tagName) {
+    return tagName.replace('-', ' ');
   }
 }

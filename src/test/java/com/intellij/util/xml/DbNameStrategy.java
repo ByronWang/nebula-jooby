@@ -15,9 +15,8 @@
  */
 package com.intellij.util.xml;
 
-import com.intel.util.NameUtil;
-import com.nebula.util.xml.DomNameStrategy;
-
+import nebula.intellij.util.name.DomNameStrategy;
+import nebula.intellij.util.name.NameUtil;
 import nebula.intellij.util.text.StringUtil;
 
 //import com.intellij.psi.codeStyle.NameUtil;
