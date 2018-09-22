@@ -3,7 +3,7 @@ package com.intellij.util.text;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 import com.intel.util.StringUtil;
-import com.intel.util.text.TextRange;
+import com.intel.util.TextRange;
 
 import java.util.ArrayList;
 import java.util.List;

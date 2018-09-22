@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intel.util.text;
+package com.intel.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Segment;
 
 import java.io.Serializable;
 

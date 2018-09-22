@@ -3,8 +3,6 @@ package com.intel.util;
 
 import com.intel.annotations.NotNull;
 import com.intel.util.StringUtil;
-import com.intel.util.text.LineColumn;
-import com.intel.util.text.TextRange;
 
 import org.junit.Test;
 

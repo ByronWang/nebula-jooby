@@ -28,9 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.text.CharFilter;
-import com.intel.util.text.LineColumn;
-import com.intel.util.text.TextRange;
 import com.intellij.util.text.CharSequenceSubSequence;
 import com.intellij.util.text.MergingCharSequence;
 

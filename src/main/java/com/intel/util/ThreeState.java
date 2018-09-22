@@ -17,7 +17,7 @@
 /*
  * @author max
  */
-package com.intellij.util;
+package com.intel.util;
 
 import com.intel.annotations.NotNull;
 

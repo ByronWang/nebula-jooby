@@ -2,12 +2,11 @@
 package com.intel.util;
 
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intellij.openapi.util.Ref;
-import com.intellij.util.*;
-
-import java.util.*;
 
 /**
  * An in-house and immutable version of {@code com.google.common.collect.FluentIterable}
@@ -64,20 +63,20 @@ public abstract class JBIterable<E> implements Iterable<E> {
     this.content = content;
   }
 
-  /**
-   * Lambda-friendly construction method.
-   */
-  @NotNull
-  public static <E> JBIterable<E> create(@Nullable final Producer<? extends Iterator<E>> producer) {
-    if (producer == null) return empty();
-    return new JBIterable<E>() {
-      @NotNull
-      @Override
-      public Iterator<E> iterator() {
-        return producer.produce();
-      }
-    };
-  }
+//  /**
+//   * Lambda-friendly construction method.
+//   */
+//  @NotNull
+//  public static <E> JBIterable<E> create(@Nullable final Producer<? extends Iterator<E>> producer) {
+//    if (producer == null) return empty();
+//    return new JBIterable<E>() {
+//      @NotNull
+//      @Override
+//      public Iterator<E> iterator() {
+//        return producer.produce();
+//      }
+//    };
+//  }
 
   /**
    * Returns a {@code JBIterable} that wraps {@code iterable}, or {@code iterable} itself if it

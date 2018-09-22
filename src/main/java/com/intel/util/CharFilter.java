@@ -14,12 +14,28 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
-package com.intellij.openapi;
+package com.intel.util;
 
-public interface Forceable {
-  boolean isDirty();
-  void force();
+/**
+ * @author Dmitry Avdeev
+ * 
+ * @see StringUtil#strip(String, CharFilter)
+ * @see StringUtil#findFirst(CharSequence, CharFilter)
+*/
+public interface CharFilter {
+  CharFilter WHITESPACE_FILTER = new CharFilter() {
+    @Override
+    public boolean accept(char ch) {
+      return Character.isWhitespace(ch);
+    }
+  };
+
+  CharFilter NOT_WHITESPACE_FILTER = new CharFilter() {
+    @Override
+    public boolean accept(char ch) {
+      return !Character.isWhitespace(ch);
+    }
+  };
+
+  boolean accept(char ch);
 }
