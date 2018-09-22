@@ -4,11 +4,10 @@ package nebula.intellij.util.container;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-
-import nebula.intellij.util.Consumer;
 
 /**
  * An in-house and immutable version of {@code com.google.common.collect.FluentIterable}
@@ -152,7 +151,7 @@ public abstract class JBIterable<E> implements Iterable<E> {
 
   public final void consumeEach(@NotNull Consumer<? super E> consumer) {
     for (E e : this) {
-      consumer.consume(e);
+      consumer.accept(e);
     }
   }
 

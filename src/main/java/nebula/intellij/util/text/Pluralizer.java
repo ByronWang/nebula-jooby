@@ -25,14 +25,6 @@
  */
 package nebula.intellij.util.text;
 
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
-
-import nebula.intellij.util.Consumer;
-import nebula.intellij.util.Pair;
-import nebula.intellij.util.container.ContainerUtil;
-import nebula.intellij.util.container.JBIterable;
-
 import static nebula.intellij.util.text.StringUtil.notNullize;
 
 import java.util.HashMap;
@@ -42,6 +34,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.intel.annotations.NotNull;
+import com.intel.annotations.Nullable;
+
+import nebula.intellij.util.Pair;
+import nebula.intellij.util.container.ContainerUtil;
+import nebula.intellij.util.container.JBIterable;
 
 /**
  * A java version of http://github.com/blakeembrey/pluralize
@@ -243,12 +242,7 @@ class Pluralizer {
       {"groove", "grooves"},
       {"pickaxe", "pickaxes"},
       {"whiskey", "whiskies"}
-    }).consumeEach(new Consumer<String[]>() {
-      @Override
-      public void consume(String[] o) {
-        pluralizer.addIrregularRule(o[0], o[1]);
-      }
-    });
+    }).consumeEach(o->pluralizer.addIrregularRule(o[0], o[1]));
 
     /*
      * Pluralization rules.
@@ -277,12 +271,7 @@ class Pluralizer {
       {"/(child)(?:ren)?$", "$1ren"},
       {"/eaux$", "$0"},
       {"/m[ae]n$", "men"},
-    }).consumeEach(new Consumer<String[]>() {
-      @Override
-      public void consume(String[] o) {
-        pluralizer.addPluralRule(o[0], o[1]);
-      }
-    });
+    }).consumeEach(o->pluralizer.addPluralRule(o[0], o[1]));
 
     /*
      * Singularization rules.
@@ -315,12 +304,7 @@ class Pluralizer {
       {"/(child)ren$", "$1"},
       {"/(eau)x?$", "$1"},
       {"/men$", "man"}
-    }).consumeEach(new Consumer<String[]>() {
-      @Override
-      public void consume(String[] o) {
-        pluralizer.addSingularRule(o[0], o[1]);
-      }
-    });
+    }).consumeEach( o-> pluralizer.addSingularRule(o[0], o[1]));
     /*
      * Uncountable rules.
      */
@@ -419,12 +403,7 @@ class Pluralizer {
       "/o[iu]s$", // "carnivorous"
       "/pox$", // "chickpox", "smallpox"
       "/sheep$"
-    ).consumeEach(new Consumer<String>() {
-      @Override
-      public void consume(String o) {
-        pluralizer.addUncountableRule(o);
-      }
-    });
+    ).consumeEach(o->pluralizer.addUncountableRule(o));
 
     PLURALIZER = pluralizer;
   }

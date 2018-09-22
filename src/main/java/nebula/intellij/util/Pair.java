@@ -9,84 +9,85 @@ import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 
 public class Pair<A, B> {
-  public final A first;
-  public final B second;
+	public final A first;
+	public final B second;
 
-  @NotNull
-  public static <A, B> Pair<A, B> create(A first, B second) {
-    //noinspection DontUsePairConstructor
-    return new Pair<A, B>(first, second);
-  }
-  @NotNull
-  public static <A, B> NonNull<A, B> createNonNull(@NotNull A first, @NotNull B second) {
-    return new NonNull<A, B>(first, second);
-  }
+	@NotNull
+	public static <A, B> Pair<A, B> create(A first, B second) {
+		// noinspection DontUsePairConstructor
+		return new Pair<A, B>(first, second);
+	}
 
-  @NotNull
-  @SuppressWarnings("MethodNamesDifferingOnlyByCase")
-  public static <A, B> Pair<A, B> pair(A first, B second) {
-    //noinspection DontUsePairConstructor
-    return new Pair<A, B>(first, second);
-  }
+	@NotNull
+	public static <A, B> NonNull<A, B> createNonNull(@NotNull A first, @NotNull B second) {
+		return new NonNull<A, B>(first, second);
+	}
 
-  @NotNull
-  public static <A, B> Function<A, Pair<A, B>> createFunction(final B value) {
-    return new Function<A, Pair<A, B>>() {
-      public Pair<A, B> apply(A a) {
-        return create(a, value);
-      }
-    };
-  }
+	@NotNull
+	public static <A, B> Pair<A, B> pair(A first, B second) {
+		// noinspection DontUsePairConstructor
+		return new Pair<A, B>(first, second);
+	}
 
-  public static <T> T getFirst(@Nullable Pair<T, ?> pair) {
-    return pair != null ? pair.first : null;
-  }
+	@NotNull
+	public static <A, B> Function<A, Pair<A, B>> createFunction(final B value) {
+		return new Function<A, Pair<A, B>>() {
+			public Pair<A, B> apply(A a) {
+				return create(a, value);
+			}
+		};
+	}
 
-  public static <T> T getSecond(@Nullable Pair<?, T> pair) {
-    return pair != null ? pair.second : null;
-  }
+	public static <T> T getFirst(@Nullable Pair<T, ?> pair) {
+		return pair != null ? pair.first : null;
+	}
 
-  @SuppressWarnings("unchecked")
-  private static final Pair EMPTY = create(null, null);
+	public static <T> T getSecond(@Nullable Pair<?, T> pair) {
+		return pair != null ? pair.second : null;
+	}
 
-  @SuppressWarnings("unchecked")
-  public static <A, B> Pair<A, B> empty() {
-    return EMPTY;
-  }
+	@SuppressWarnings({ "rawtypes" })
+	private static final Pair EMPTY = create(null, null);
 
-  public Pair(A first, B second) {
-    this.first = first;
-    this.second = second;
-  }
+	@SuppressWarnings("unchecked")
+	public static <A, B> Pair<A, B> empty() {
+		return EMPTY;
+	}
 
-  public final A getFirst() {
-    return first;
-  }
+	public Pair(A first, B second) {
+		this.first = first;
+		this.second = second;
+	}
 
-  public final B getSecond() {
-    return second;
-  }
+	public final A getFirst() {
+		return first;
+	}
 
-  @Override
-  public final boolean equals(Object o) {
-    return o instanceof Pair && Comparing.equal(first, ((Pair)o).first) && Comparing.equal(second, ((Pair)o).second);
-  }
+	public final B getSecond() {
+		return second;
+	}
 
-  @Override
-  public int hashCode() {
-    int result = first != null ? first.hashCode() : 0;
-    result = 31 * result + (second != null ? second.hashCode() : 0);
-    return result;
-  }
+	@SuppressWarnings("rawtypes")
+	@Override
+	public final boolean equals(Object o) {
+		return o instanceof Pair && Comparing.equal(first, ((Pair) o).first) && Comparing.equal(second, ((Pair) o).second);
+	}
 
-  @Override
-  public String toString() {
-    return "<" + first + "," + second + ">";
-  }
+	@Override
+	public int hashCode() {
+		int result = first != null ? first.hashCode() : 0;
+		result = 31 * result + (second != null ? second.hashCode() : 0);
+		return result;
+	}
 
-  public static class NonNull<A, B> extends Pair<A,B> {
-    public NonNull(@NotNull A first, @NotNull B second) {
-      super(first, second);
-    }
-  }
+	@Override
+	public String toString() {
+		return "<" + first + "," + second + ">";
+	}
+
+	public static class NonNull<A, B> extends Pair<A, B> {
+		public NonNull(@NotNull A first, @NotNull B second) {
+			super(first, second);
+		}
+	}
 }

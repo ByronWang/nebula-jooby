@@ -1,6 +1,5 @@
 package nebula.intellij.util;
 
-import java.util.Collection;
 import java.util.List;
 
 public class ArrayUtil {

@@ -40,7 +40,6 @@ import nebula.intellij.util.Comparing;
 import nebula.intellij.util.Condition;
 import nebula.intellij.util.Pair;
 
-@SuppressWarnings({"UtilityClassWithoutPrivateConstructor", "MethodOverridesStaticMethodOfSuperclass"})
 public class ContainerUtil extends ContainerUtilRt {
   private static final int INSERTION_SORT_THRESHOLD = 10;
 

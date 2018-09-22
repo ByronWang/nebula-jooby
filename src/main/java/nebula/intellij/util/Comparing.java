@@ -141,7 +141,6 @@ public class Comparing {
     return true;
   }
 
-  @SuppressWarnings("MethodNamesDifferingOnlyByCase")
   public static int hashcode(@Nullable Object obj) {
     return obj == null ? 0 : obj.hashCode();
   }

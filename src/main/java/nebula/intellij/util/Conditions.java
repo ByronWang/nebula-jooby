@@ -63,9 +63,9 @@ public class Conditions {
     };
   }
 
-  public static Condition<Class> assignableTo(final Class clazz) {
-    return new Condition<Class>() {
-      public boolean value(Class t) {
+  public static Condition<Class<?>> assignableTo(final Class<?> clazz) {
+    return new Condition<Class<?>>() {
+      public boolean value(Class<?> t) {
         return clazz.isAssignableFrom(t);
       }
     };
@@ -114,7 +114,8 @@ public class Conditions {
     };
   }
 
-  public static <T> Condition<T> not(Condition<T> c) {
+  @SuppressWarnings("rawtypes")
+public static <T> Condition<T> not(Condition<T> c) {
     if (c == TRUE) return alwaysFalse();
     if (c == FALSE) return alwaysTrue();
     if (c instanceof Not) return ((Not)c).c;

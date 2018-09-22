@@ -15,13 +15,6 @@
  */
 package nebula.intellij.util;
 
-/**
- * Returns {@code true} or {@code false} for the given input object.
- * <p/>
- * See {@link Conditions} for chained conditions.
- *
- * @author dsl
- */
 public interface Condition<T> {
   boolean value(T t);
 
@@ -39,7 +32,8 @@ public interface Condition<T> {
   /**
    * @see Conditions#alwaysTrue()
    */
-  Condition TRUE = new Condition() {
+  @SuppressWarnings("rawtypes")
+Condition TRUE = new Condition() {
     public boolean value(final Object object) {
       return true;
     }
@@ -52,6 +46,7 @@ public interface Condition<T> {
   /**
    * @see Conditions#alwaysFalse()
    */
+  @SuppressWarnings("rawtypes")
   Condition FALSE = new Condition() {
     public boolean value(final Object object) {
       return false;
