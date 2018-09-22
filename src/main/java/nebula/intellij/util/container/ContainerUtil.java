@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
@@ -37,7 +38,6 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import nebula.intellij.util.Comparing;
 import nebula.intellij.util.Condition;
-import nebula.intellij.util.Function;
 import nebula.intellij.util.Pair;
 
 @SuppressWarnings({"UtilityClassWithoutPrivateConstructor", "MethodOverridesStaticMethodOfSuperclass"})
@@ -656,7 +656,7 @@ public class ContainerUtil extends ContainerUtilRt {
                                             @NotNull Function<T, Pair<K, V>> mapper) {
     final Map<K, V> set = new THashMap<K, V>(collection.size());
     for (T t : collection) {
-      Pair<K, V> pair = mapper.fun(t);
+      Pair<K, V> pair = mapper.apply(t);
       set.put(pair.first, pair.second);
     }
     return set;
@@ -675,7 +675,7 @@ public class ContainerUtil extends ContainerUtilRt {
                                                    @NotNull Function<T, Pair<K, V>> mapper) {
     final Map<K, V> set = new THashMap<K, V>(collection.size());
     for (T t : collection) {
-      Pair<K, V> pair = mapper.fun(t);
+      Pair<K, V> pair = mapper.apply(t);
       if (pair != null) {
         set.put(pair.first, pair.second);
       }
@@ -988,7 +988,7 @@ public class ContainerUtil extends ContainerUtilRt {
   public static <T, V> List<T> concat(@NotNull Iterable<? extends V> list, @NotNull Function<V, Collection<? extends T>> listGenerator) {
     List<T> result = new ArrayList<T>();
     for (final V v : list) {
-      result.addAll(listGenerator.fun(v));
+      result.addAll(listGenerator.apply(v));
     }
     return result.isEmpty() ? ContainerUtil.<T>emptyList() : result;
   }
@@ -1108,7 +1108,7 @@ public class ContainerUtil extends ContainerUtilRt {
 
       @Override
       public U next() {
-        return mapper.fun(iterator.next());
+        return mapper.apply(iterator.next());
       }
 
       @Override
@@ -1350,7 +1350,7 @@ public class ContainerUtil extends ContainerUtilRt {
   public static <T,V> List<V> map(@NotNull Iterable<? extends T> iterable, @NotNull Function<T, V> mapping) {
     List<V> result = new ArrayList<V>();
     for (T t : iterable) {
-      result.add(mapping.fun(t));
+      result.add(mapping.apply(t));
     }
     return result.isEmpty() ? ContainerUtil.<V>emptyList() : result;
   }
@@ -1388,7 +1388,7 @@ public class ContainerUtil extends ContainerUtilRt {
   public static <T, V> V[] mapNotNull(@NotNull T[] array, @NotNull Function<T, V> mapping, @NotNull V[] emptyArray) {
     List<V> result = new ArrayList<V>(array.length);
     for (T t : array) {
-      V v = mapping.fun(t);
+      V v = mapping.apply(t);
       if (v != null) {
         result.add(v);
       }
@@ -1410,7 +1410,7 @@ public class ContainerUtil extends ContainerUtilRt {
   public static <T, V> List<V> mapNotNull(@NotNull Iterable<? extends T> iterable, @NotNull Function<T, V> mapping) {
     List<V> result = new ArrayList<V>();
     for (T t : iterable) {
-      final V o = mapping.fun(t);
+      final V o = mapping.apply(t);
       if (o != null) {
         result.add(o);
       }
@@ -1450,7 +1450,7 @@ public class ContainerUtil extends ContainerUtilRt {
   public static <T, V> List<V> map(@NotNull T[] array, @NotNull Function<T, V> mapping) {
     List<V> result = new ArrayList<V>(array.length);
     for (T t : array) {
-      result.add(mapping.fun(t));
+      result.add(mapping.apply(t));
     }
     return result.isEmpty() ? ContainerUtil.<V>emptyList() : result;
   }
@@ -1466,7 +1466,7 @@ public class ContainerUtil extends ContainerUtilRt {
     V[] result = emptyArray.length < arr.length ? Arrays.copyOf(emptyArray, arr.length) : emptyArray;
 
     for (int i = 0; i < arr.length; i++) {
-      result[i] = mapping.fun(arr[i]);
+      result[i] = mapping.apply(arr[i]);
     }
     return result;
   }
@@ -1749,7 +1749,7 @@ public class ContainerUtil extends ContainerUtilRt {
       to = array;
     }
     for (int i = 0; i < from.length; i++) {
-      to[i] = fun.fun(from[i]);
+      to[i] = fun.apply(from[i]);
     }
     return to;
   }
@@ -1870,7 +1870,7 @@ public class ContainerUtil extends ContainerUtilRt {
     if (collection.isEmpty()) return Collections.emptySet();
     Set <V> set = new LinkedHashSet<V>(collection.size());
     for (final T t : collection) {
-      set.add(mapper.fun(t));
+      set.add(mapper.apply(t));
     }
     return set;
   }
@@ -1881,7 +1881,7 @@ public class ContainerUtil extends ContainerUtilRt {
     if (collection.isEmpty()) return Collections.emptySet();
     Set <V> set = new HashSet<V>(collection.size());
     for (T t : collection) {
-      V value = mapper.fun(t);
+      V value = mapper.apply(t);
       if (value != null) {
         set.add(value);
       }

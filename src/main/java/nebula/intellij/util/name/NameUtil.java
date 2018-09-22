@@ -1,21 +1,21 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package nebula.intellij.util.name;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import com.intel.annotations.NonNls;
 import com.intel.annotations.NotNull;
 
 import nebula.intellij.util.ArrayUtil;
-import nebula.intellij.util.Function;
 import nebula.intellij.util.container.ContainerUtil;
 import nebula.intellij.util.text.StringUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class NameUtil {
   private static final Function<String,String> LOWERCASE_MAPPING = new Function<String, String>() {
     @Override
-    public String fun(final String s) {
+    public String apply(final String s) {
       return s.toLowerCase();
     }
   };
@@ -445,7 +445,7 @@ public class NameUtil {
   public static String capitalizeAndUnderscore(@NotNull String name) {
     return splitWords(name, '_', new Function<String, String>() {
       @Override
-      public String fun(String s) {
+      public String apply(String s) {
         return StringUtil.toUpperCase(s);
       }
     });
@@ -467,7 +467,7 @@ public class NameUtil {
       } else {
         insertSeparator = true;
       }
-      buf.append(transformWord.fun(word));
+      buf.append(transformWord.apply(word));
     }
     return buf.toString();
 

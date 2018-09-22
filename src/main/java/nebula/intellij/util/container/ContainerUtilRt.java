@@ -1,19 +1,35 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package nebula.intellij.util.container;
 
+import java.io.Serializable;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.RandomAccess;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 
 import nebula.intellij.util.Condition;
-import nebula.intellij.util.Function;
 import nebula.intellij.util.Pair;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Stripped-down version of {@code com.intellij.util.containers.ContainerUtil}.
@@ -379,7 +395,7 @@ public class ContainerUtilRt {
 
 		List<V> result = new ArrayList<V>(collection.size());
 		for (T t : collection) {
-			final V o = mapping.fun(t);
+			final V o = mapping.apply(t);
 			if (o != null) {
 				result.add(o);
 			}
@@ -397,7 +413,7 @@ public class ContainerUtilRt {
 		if (collection.isEmpty()) return emptyList();
 		List<V> list = new ArrayList<V>(collection.size());
 		for (final T t : collection) {
-			list.add(mapper.fun(t));
+			list.add(mapper.apply(t));
 		}
 		return list;
 	}
@@ -436,7 +452,7 @@ public class ContainerUtilRt {
 		if (collection.isEmpty()) return Collections.emptySet();
 		Set<V> set = new HashSet<V>(collection.size());
 		for (final T t : collection) {
-			set.add(mapper.fun(t));
+			set.add(mapper.apply(t));
 		}
 		return set;
 	}

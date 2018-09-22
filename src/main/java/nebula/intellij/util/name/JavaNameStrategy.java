@@ -15,10 +15,10 @@
  */
 package nebula.intellij.util.name;
 
-import nebula.intellij.util.Function;
-import nebula.intellij.util.text.StringUtil;
-
 import java.util.Arrays;
+import java.util.function.Function;
+
+import nebula.intellij.util.text.StringUtil;
 
 /**
  * This strategy decapitalizes property name, e.g. getXmlElementName() will correspond to xmlElementName

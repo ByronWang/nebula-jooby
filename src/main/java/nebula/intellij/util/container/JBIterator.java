@@ -15,17 +15,15 @@
  */
 package nebula.intellij.util.container;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
+
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 
 import nebula.intellij.util.Condition;
-import nebula.intellij.util.Function;
 import nebula.intellij.util.text.StringUtil;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Iterator that accumulates transformations and filters keeping its instance.
@@ -271,7 +269,7 @@ public abstract class JBIterator<E> implements Iterator<E> {
 
     @Override
     Object apply(Object o) {
-      return impl.fun((E)o);
+      return impl.apply((E)o);
     }
   }
 
