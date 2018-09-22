@@ -15,7 +15,6 @@ import com.intel.annotations.Nullable;
  *
  * @since 12.0
  */
-@SuppressWarnings("UtilityClassWithoutPrivateConstructor")
 public class StringUtilRt {
   @Contract(pure = true)
   public static boolean charsEqualIgnoreCase(char a, char b) {
@@ -206,7 +205,8 @@ public class StringUtilRt {
     }
   }
 
-  @NotNull
+  @SuppressWarnings("rawtypes")
+@NotNull
   @Contract(pure = true)
   public static String getShortName(@NotNull Class aClass) {
     return getShortName(aClass.getName());

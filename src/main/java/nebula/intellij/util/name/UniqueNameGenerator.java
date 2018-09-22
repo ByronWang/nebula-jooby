@@ -30,7 +30,7 @@ import java.util.function.Function;
  * @author peter
  */
 public class UniqueNameGenerator implements Condition<String> {
-  private final Set<String> myExistingNames = new THashSet();
+  private final Set<String> myExistingNames = new THashSet<>();
 
   public <T> UniqueNameGenerator(@NotNull Collection<T> elements, @Nullable Function<T, String> namer) {
     for (final T t : elements) {

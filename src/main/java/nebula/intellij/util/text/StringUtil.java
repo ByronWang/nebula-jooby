@@ -36,11 +36,9 @@ import nebula.intellij.util.text.charsequence.CharSequenceSubSequence;
 import nebula.intellij.util.text.charsequence.MergingCharSequence;
 
 //TeamCity inherits StringUtil: do not add private constructors!!!
-@SuppressWarnings({ "UtilityClassWithoutPrivateConstructor", "MethodOverridesStaticMethodOfSuperclass" })
 public class StringUtil extends StringUtilRt {
 	private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(StringUtil.class);
 
-	@SuppressWarnings("SpellCheckingInspection")
 	private static final String VOWELS = "aeiouy";
 	private static final Pattern EOL_SPLIT_KEEP_SEPARATORS = Pattern.compile("(?<=(\r\n|\n))|(?<=\r)(?=[^\n])");
 	private static final Pattern EOL_SPLIT_PATTERN = Pattern.compile(" *(\r|\n|\r\n)+ *");
@@ -1202,7 +1200,7 @@ public class StringUtil extends StringUtilRt {
 
 	@NotNull
 	@Contract(pure = true)
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List<String> split(@NotNull String s, @NotNull String separator, boolean excludeSeparator, boolean excludeEmptyStrings) {
 		return (List) split((CharSequence) s, separator, excludeSeparator, excludeEmptyStrings);
 	}
@@ -1234,7 +1232,6 @@ public class StringUtil extends StringUtilRt {
 
 	@NotNull
 	@Contract(pure = true)
-	@SuppressWarnings("Duplicates")
 	public static Iterable<String> tokenize(@NotNull String s, @NotNull String separators) {
 		final nebula.intellij.util.text.StringTokenizer tokenizer = new nebula.intellij.util.text.StringTokenizer(s, separators);
 		return new Iterable<String>() {
@@ -1263,7 +1260,6 @@ public class StringUtil extends StringUtilRt {
 
 	@NotNull
 	@Contract(pure = true)
-	@SuppressWarnings("Duplicates")
 	public static Iterable<String> tokenize(@NotNull final StringTokenizer tokenizer) {
 		return new Iterable<String>() {
 			@NotNull
@@ -2473,7 +2469,6 @@ public class StringUtil extends StringUtilRt {
 	}
 
 	@Contract(pure = true)
-	@SuppressWarnings("Duplicates")
 	public static int getOccurrenceCount(@NotNull String text, final char c) {
 		int res = 0;
 		int i = 0;
@@ -2490,7 +2485,6 @@ public class StringUtil extends StringUtilRt {
 	}
 
 	@Contract(pure = true)
-	@SuppressWarnings("Duplicates")
 	public static int getOccurrenceCount(@NotNull String text, @NotNull String s) {
 		int res = 0;
 		int i = 0;
@@ -3022,6 +3016,7 @@ public class StringUtil extends StringUtilRt {
 		return StringUtilRt.parseEnum(string, defaultValue, clazz);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@NotNull
 	@Contract(pure = true)
 	public static String getShortName(@NotNull Class aClass) {
@@ -3064,7 +3059,6 @@ public class StringUtil extends StringUtilRt {
 	 * | Data Views</em>.
 	 */
 	@Contract("null->null;!null->!null")
-	@SuppressWarnings("UnusedDeclaration")
 	static String toShortString(@Nullable Object o) {
 		if (o == null) return null;
 		if (o instanceof CharSequence) return o.toString();
@@ -3087,7 +3081,6 @@ public class StringUtil extends StringUtilRt {
 	 * false for "ops"
 	 */
 	@Contract(pure = true)
-	@SuppressWarnings("StringToUpperCaseOrToLowerCaseWithoutLocale")
 	public static boolean isBetween(@NotNull String string, @NotNull String smallPart, @NotNull String bigPart) {
 		final String s = string.toLowerCase();
 		return s.startsWith(smallPart.toLowerCase()) && bigPart.toLowerCase().startsWith(s);
@@ -3204,7 +3197,6 @@ public class StringUtil extends StringUtilRt {
 	@Contract(pure = true)
 	@NotNull
 	public static String toHexString(@NotNull byte[] bytes) {
-		@SuppressWarnings("SpellCheckingInspection")
 		String digits = "0123456789abcdef";
 		StringBuilder sb = new StringBuilder(2 * bytes.length);
 		for (byte b : bytes)
