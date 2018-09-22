@@ -5,8 +5,8 @@ package nebula.intellij.util;
 
 import java.util.function.Function;
 
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 
 public class Pair<A, B> {
 	public final A first;

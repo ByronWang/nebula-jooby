@@ -27,9 +27,8 @@
  */
 package nebula.intellij.util.text.charsequence;
 
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
-
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 import nebula.intellij.util.text.StringUtil;
 
 /**

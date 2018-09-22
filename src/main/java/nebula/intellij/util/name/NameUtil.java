@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import com.intel.annotations.NonNls;
-import com.intel.annotations.NotNull;
-
 import nebula.intellij.util.ArrayUtil;
+import nebula.intellij.util.annotations.NonNls;
+import nebula.intellij.util.annotations.NotNull;
 import nebula.intellij.util.container.ContainerUtil;
 import nebula.intellij.util.text.StringUtil;
 

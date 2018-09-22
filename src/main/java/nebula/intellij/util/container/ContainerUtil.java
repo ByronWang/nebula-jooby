@@ -30,15 +30,14 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
-import com.intel.annotations.Contract;
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
-
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import nebula.intellij.util.Comparing;
 import nebula.intellij.util.Condition;
 import nebula.intellij.util.Pair;
+import nebula.intellij.util.annotations.Contract;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 
 @SuppressWarnings("unchecked")
 public class ContainerUtil extends ContainerUtilRt {

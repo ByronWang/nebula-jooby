@@ -15,10 +15,10 @@
  */
 package nebula.intellij.util.text;
 
-import com.intel.annotations.Contract;
-import com.intel.annotations.NotNull;
-
 import java.util.Comparator;
+
+import nebula.intellij.util.annotations.Contract;
+import nebula.intellij.util.annotations.NotNull;
 
 /**
  * Implementation of <a href="http://www.codinghorror.com/blog/2007/12/sorting-for-humans-natural-sort-order.html"/>

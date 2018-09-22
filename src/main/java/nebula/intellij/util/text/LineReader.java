@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.intel.annotations.Nullable;
+import nebula.intellij.util.annotations.Nullable;
 
 public class LineReader {
   private int myPos = -1;

@@ -15,7 +15,7 @@
  */
 package nebula.intellij.util.text.charsequence;
 
-import com.intel.annotations.NotNull;
+import nebula.intellij.util.annotations.NotNull;
 
 /**
  * A char sequence that supports fast copying of its full or partial contents to a char array. May be useful for performance optimizations

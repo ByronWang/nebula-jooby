@@ -1,9 +1,8 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package nebula.intellij.util.text;
 
-import com.intel.annotations.NotNull;
-
 import nebula.intellij.util.Comparing;
+import nebula.intellij.util.annotations.NotNull;
 import nebula.intellij.util.container.ContainerUtil;
 import nebula.intellij.util.text.LineColumn;
 import nebula.intellij.util.text.LineSeparator;

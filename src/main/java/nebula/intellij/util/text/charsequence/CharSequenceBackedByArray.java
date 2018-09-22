@@ -16,7 +16,7 @@
 
 package nebula.intellij.util.text.charsequence;
 
-import com.intel.annotations.NotNull;
+import nebula.intellij.util.annotations.NotNull;
 
 /**
  * A char sequence based on a char array. May be used for performance optimizations.

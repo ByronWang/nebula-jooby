@@ -18,7 +18,7 @@ package nebula.intellij.util.text;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
-import com.intel.annotations.NotNull;
+import nebula.intellij.util.annotations.NotNull;
 
 /**
  * Copy of {@link java.util.StringTokenizer} with added {@link #getCurrentPosition()} and {@link #reset(String)} methods.

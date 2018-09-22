@@ -17,8 +17,7 @@ package nebula.intellij.util.text.charsequence;
 
 import java.util.Arrays;
 
-import com.intel.annotations.NotNull;
-
+import nebula.intellij.util.annotations.NotNull;
 import nebula.intellij.util.text.StringUtil;
 
 public class ByteArrayCharSequence implements CharSequenceWithStringHash {

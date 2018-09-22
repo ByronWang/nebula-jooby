@@ -25,11 +25,10 @@ import javax.swing.text.html.parser.ParserDelegator;
 
 import org.slf4j.LoggerFactory;
 
-import com.intel.annotations.Contract;
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
-
 import nebula.intellij.util.Pair;
+import nebula.intellij.util.annotations.Contract;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 import nebula.intellij.util.container.ContainerUtil;
 import nebula.intellij.util.text.charsequence.CharFilter;
 import nebula.intellij.util.text.charsequence.CharSequenceSubSequence;

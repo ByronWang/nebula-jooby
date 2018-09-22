@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 
 /**
  * An in-house and immutable version of {@code com.google.common.collect.FluentIterable}

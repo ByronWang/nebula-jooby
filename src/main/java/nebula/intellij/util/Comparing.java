@@ -15,10 +15,9 @@
  */
 package nebula.intellij.util;
 
-import com.intel.annotations.Contract;
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
-
+import nebula.intellij.util.annotations.Contract;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 import nebula.intellij.util.text.StringUtilRt;
 
 import java.util.*;

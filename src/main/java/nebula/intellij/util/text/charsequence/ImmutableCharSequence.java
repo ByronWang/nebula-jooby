@@ -15,8 +15,8 @@
  */
 package nebula.intellij.util.text.charsequence;
 
-import com.intel.annotations.Contract;
-import com.intel.annotations.NotNull;
+import nebula.intellij.util.annotations.Contract;
+import nebula.intellij.util.annotations.NotNull;
 
 public abstract class ImmutableCharSequence implements CharSequence {
 

@@ -5,8 +5,8 @@ package nebula.intellij.util.text;
 
 import java.nio.charset.Charset;
 
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 
 /**
  * <p>

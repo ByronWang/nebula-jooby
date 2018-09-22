@@ -17,9 +17,8 @@ package nebula.intellij.util.text;
 
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.procedure.TIntProcedure;
-
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Locale;

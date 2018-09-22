@@ -1,4 +1,4 @@
-package com.intel.annotations;
+package nebula.intellij.util.annotations;
 
 public @interface Contract {
 

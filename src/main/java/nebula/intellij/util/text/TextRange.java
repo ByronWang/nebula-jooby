@@ -18,8 +18,8 @@ package nebula.intellij.util.text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 
 import java.io.Serializable;
 

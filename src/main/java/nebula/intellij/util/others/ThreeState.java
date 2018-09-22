@@ -19,7 +19,7 @@
  */
 package nebula.intellij.util.others;
 
-import com.intel.annotations.NotNull;
+import nebula.intellij.util.annotations.NotNull;
 
 public enum ThreeState {
   YES, NO, UNSURE;

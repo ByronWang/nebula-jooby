@@ -35,10 +35,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
-
 import nebula.intellij.util.Pair;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 import nebula.intellij.util.container.ContainerUtil;
 import nebula.intellij.util.container.JBIterable;
 

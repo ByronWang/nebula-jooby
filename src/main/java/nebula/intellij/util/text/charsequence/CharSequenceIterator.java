@@ -17,7 +17,7 @@ package nebula.intellij.util.text.charsequence;
 
 import java.text.CharacterIterator;
 
-import com.intel.annotations.NotNull;
+import nebula.intellij.util.annotations.NotNull;
 
 /**
  * {@link CharacterIterator} implementation for a given fragment of a {@link CharSequence}.

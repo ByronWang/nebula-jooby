@@ -15,12 +15,12 @@
  */
 package nebula.intellij.util.text;
 
-import com.intel.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import nebula.intellij.util.annotations.NotNull;
 
 /**
  * @author Rustam Vishnyakov

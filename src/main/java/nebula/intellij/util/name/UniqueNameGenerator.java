@@ -15,11 +15,10 @@
  */
 package nebula.intellij.util.name;
 
-import com.intel.annotations.NotNull;
-import com.intel.annotations.Nullable;
-
 import gnu.trove.set.hash.THashSet;
 import nebula.intellij.util.Condition;
+import nebula.intellij.util.annotations.NotNull;
+import nebula.intellij.util.annotations.Nullable;
 import nebula.intellij.util.text.StringUtil;
 
 import java.util.Collection;
