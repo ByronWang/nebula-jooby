@@ -1,4 +1,4 @@
-package com.intel.util;
+package nebula.intellij.util;
 
 import java.util.Collection;
 import java.util.List;

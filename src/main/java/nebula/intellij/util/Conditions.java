@@ -19,8 +19,7 @@ import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-
-import com.intel.util.Function;
+import java.util.function.Function;
 
 /**
  * @author max
@@ -145,7 +144,7 @@ public class Conditions {
   public static <A, B> Condition<A> compose(final Function<? super A, B> fun, final Condition<? super B> condition) {
     return new Condition<A>() {
       public boolean value(A o) {
-        return condition.value(fun.fun(o));
+        return condition.value(fun.apply(o));
       }
     };
   }

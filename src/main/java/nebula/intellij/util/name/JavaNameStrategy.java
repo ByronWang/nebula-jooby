@@ -15,8 +15,7 @@
  */
 package nebula.intellij.util.name;
 
-import com.intel.util.Function;
-
+import nebula.intellij.util.Function;
 import nebula.intellij.util.text.StringUtil;
 
 import java.util.Arrays;

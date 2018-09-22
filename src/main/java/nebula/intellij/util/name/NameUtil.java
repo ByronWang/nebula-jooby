@@ -3,9 +3,9 @@ package nebula.intellij.util.name;
 
 import com.intel.annotations.NonNls;
 import com.intel.annotations.NotNull;
-import com.intel.util.ArrayUtil;
-import com.intel.util.Function;
 
+import nebula.intellij.util.ArrayUtil;
+import nebula.intellij.util.Function;
 import nebula.intellij.util.container.ContainerUtil;
 import nebula.intellij.util.text.StringUtil;
 

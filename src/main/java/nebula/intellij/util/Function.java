@@ -1,4 +1,4 @@
-package com.intel.util;
+package nebula.intellij.util;
 
 public interface Function<T, R> extends java.util.function.Function<T, R> {
 

@@ -32,12 +32,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Function;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import nebula.intellij.util.Comparing;
 import nebula.intellij.util.Condition;
+import nebula.intellij.util.Function;
 import nebula.intellij.util.Pair;
 
 @SuppressWarnings({"UtilityClassWithoutPrivateConstructor", "MethodOverridesStaticMethodOfSuperclass"})

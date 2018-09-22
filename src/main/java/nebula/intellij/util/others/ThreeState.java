@@ -17,7 +17,7 @@
 /*
  * @author max
  */
-package com.intel.util;
+package nebula.intellij.util.others;
 
 import com.intel.annotations.NotNull;
 

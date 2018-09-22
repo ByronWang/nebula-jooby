@@ -4,9 +4,9 @@ package nebula.intellij.util.container;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Function;
 
 import nebula.intellij.util.Condition;
+import nebula.intellij.util.Function;
 import nebula.intellij.util.Pair;
 
 import java.io.Serializable;
