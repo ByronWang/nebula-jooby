@@ -2,7 +2,12 @@
 package com.intel.util;
 
 import com.intel.annotations.NotNull;
-import com.intel.util.StringUtil;
+
+import nebula.intellij.util.container.ContainerUtil;
+import nebula.intellij.util.text.LineColumn;
+import nebula.intellij.util.text.LineSeparator;
+import nebula.intellij.util.text.StringUtil;
+import nebula.intellij.util.text.TextRange;
 
 import org.junit.Test;
 

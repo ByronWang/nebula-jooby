@@ -19,6 +19,8 @@ import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 
+import nebula.intellij.util.text.StringUtilRt;
+
 import java.util.*;
 
 /**

@@ -16,7 +16,8 @@
 package com.nebula.util.xml;
 
 import com.intel.util.NameUtil;
-import com.intel.util.StringUtil;
+
+import nebula.intellij.util.text.StringUtil;
 
 /**
  * This strategy splits property name into words, decapitalizes them and joins using hyphen as separator,

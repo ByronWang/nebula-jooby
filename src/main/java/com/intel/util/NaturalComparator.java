@@ -18,6 +18,8 @@ package com.intel.util;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 
+import nebula.intellij.util.text.StringUtil;
+
 import java.util.Comparator;
 
 /**

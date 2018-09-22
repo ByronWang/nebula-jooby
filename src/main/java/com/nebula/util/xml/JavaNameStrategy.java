@@ -17,7 +17,8 @@ package com.nebula.util.xml;
 
 import com.intel.util.Function;
 import com.intel.util.NameUtil;
-import com.intel.util.StringUtil;
+
+import nebula.intellij.util.text.StringUtil;
 
 import java.util.Arrays;
 

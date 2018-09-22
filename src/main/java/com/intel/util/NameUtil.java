@@ -4,6 +4,9 @@ package com.intel.util;
 import com.intel.annotations.NonNls;
 import com.intel.annotations.NotNull;
 
+import nebula.intellij.util.container.ContainerUtil;
+import nebula.intellij.util.text.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
