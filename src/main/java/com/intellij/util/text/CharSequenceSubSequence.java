@@ -18,7 +18,6 @@ package com.intellij.util.text;
 
 import com.intel.annotations.NotNull;
 import com.intel.util.StringUtil;
-import com.intellij.openapi.util.text.CharSequenceWithStringHash;
 
 public class CharSequenceSubSequence implements CharSequence, CharArrayExternalizable, CharSequenceWithStringHash {
   private final CharSequence myChars;

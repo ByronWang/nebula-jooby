@@ -6,7 +6,6 @@ import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.*;
-import com.intellij.util.containers.JBIterator;
 
 import java.util.*;
 

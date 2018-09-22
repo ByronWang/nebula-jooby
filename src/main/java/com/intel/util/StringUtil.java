@@ -28,10 +28,9 @@ import org.slf4j.LoggerFactory;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
+import com.intel.util.text.CharFilter;
 import com.intel.util.text.LineColumn;
 import com.intel.util.text.TextRange;
-import com.intellij.openapi.util.text.CharFilter;
-import com.intellij.openapi.util.text.CharSequenceWithStringHash;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.text.CharSequenceSubSequence;
 import com.intellij.util.text.MergingCharSequence;
@@ -846,16 +845,16 @@ public class StringUtil extends StringUtilRt {
 		}
 		return capitalize(s);
 	}
-
-	@Contract(pure = true)
-	public static int stringHashCode(@NotNull CharSequence chars) {
-		if (chars instanceof String || chars instanceof CharSequenceWithStringHash) {
-			// we know for sure these classes have conformant (and maybe faster) hashCode()
-			return chars.hashCode();
-		}
-
-		return stringHashCode(chars, 0, chars.length());
-	}
+//
+//	@Contract(pure = true)
+//	public static int stringHashCode(@NotNull CharSequence chars) {
+//		if (chars instanceof String || chars instanceof CharSequenceWithStringHash) {
+//			// we know for sure these classes have conformant (and maybe faster) hashCode()
+//			return chars.hashCode();
+//		}
+//
+//		return stringHashCode(chars, 0, chars.length());
+//	}
 
 	@Contract(pure = true)
 	public static int stringHashCode(@NotNull CharSequence chars, int from, int to) {
@@ -2693,11 +2692,11 @@ public class StringUtil extends StringUtilRt {
 		final int compare = compare(s1, s2, ignoreCase);
 		return compare != 0 ? compare : compare(t1, t2, ignoreCase);
 	}
-
-	@Contract(pure = true)
-	public static int hashCode(@NotNull CharSequence s) {
-		return stringHashCode(s);
-	}
+//
+//	@Contract(pure = true)
+//	public static int hashCode(@NotNull CharSequence s) {
+//		return stringHashCode(s);
+//	}
 
 	@Contract(pure = true)
 	public static boolean equals(@Nullable CharSequence s1, @Nullable CharSequence s2) {

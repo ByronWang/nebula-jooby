@@ -17,7 +17,6 @@ package com.intellij.util.text;
 
 import com.intel.annotations.NotNull;
 import com.intel.util.StringUtil;
-import com.intellij.openapi.util.text.CharSequenceWithStringHash;
 
 public class CharArrayCharSequence implements CharSequenceBackedByArray, CharSequenceWithStringHash {
   protected final char[] myChars;

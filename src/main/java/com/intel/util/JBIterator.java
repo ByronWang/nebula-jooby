@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.util.containers;
+package com.intel.util;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Condition;
-import com.intel.util.Function;
-import com.intel.util.JBIterable;
-import com.intel.util.StringUtil;
 
 import java.util.Collections;
 import java.util.Iterator;

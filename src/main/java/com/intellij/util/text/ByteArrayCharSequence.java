@@ -19,7 +19,6 @@ import java.util.Arrays;
 
 import com.intel.annotations.NotNull;
 import com.intel.util.StringUtil;
-import com.intellij.openapi.util.text.CharSequenceWithStringHash;
 
 public class ByteArrayCharSequence implements CharSequenceWithStringHash {
   private final int myStart;

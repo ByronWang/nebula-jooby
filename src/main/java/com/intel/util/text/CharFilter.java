@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2000-2009 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.openapi.util.text;
+
+package com.intel.util.text;
 
 import com.intel.util.StringUtil;
 
 /**
- * This interface implementations must have {@code hashCode} values equal to those for String.
- *
- * @see StringUtil#stringHashCode(CharSequence)
- */
-public interface CharSequenceWithStringHash extends CharSequence {
-  @Override
-  int hashCode();
+ * @author Dmitry Avdeev
+ * 
+ * @see StringUtil#strip(String, CharFilter)
+ * @see StringUtil#findFirst(CharSequence, CharFilter)
+*/
+public interface CharFilter {
+  CharFilter WHITESPACE_FILTER = new CharFilter() {
+    @Override
+    public boolean accept(char ch) {
+      return Character.isWhitespace(ch);
+    }
+  };
+
+  CharFilter NOT_WHITESPACE_FILTER = new CharFilter() {
+    @Override
+    public boolean accept(char ch) {
+      return !Character.isWhitespace(ch);
+    }
+  };
+
+  boolean accept(char ch);
 }

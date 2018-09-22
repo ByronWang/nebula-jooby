@@ -31,7 +31,6 @@ import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 import com.intel.util.ArrayUtil;
 import com.intel.util.StringUtil;
-import com.intellij.openapi.util.text.CharSequenceWithStringHash;
 
 /**
  * A pruned and optimized version of javolution.text.Text
