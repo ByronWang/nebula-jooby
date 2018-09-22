@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2010 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.util;
+package com.intel.util;
 
-public interface Consumer<T> {
-  Consumer EMPTY_CONSUMER = new Consumer() {
-    public void consume(Object t) { }
+import java.util.Comparator;
+
+public interface Segment {
+  Segment[] EMPTY_ARRAY = new Segment[0];
+  int getStartOffset();
+  int getEndOffset();
+
+  Comparator<Segment> BY_START_OFFSET_THEN_END_OFFSET = new Comparator<Segment>() {
+    @Override
+    public int compare(Segment r1, Segment r2) {
+      int result = r1.getStartOffset() - r2.getStartOffset();
+      if (result == 0) result = r1.getEndOffset() - r2.getEndOffset();
+      return result;
+    }
   };
-
-  /**
-   * @param t consequently takes value of each element of the set this processor is passed to for processing.
-   * t is supposed to be a not-null value. If you need to pass {@code null}s to the consumer use {@link NullableConsumer} instead
-   */
-  void consume(T t);
 }

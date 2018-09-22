@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.openapi.util;
+package com.intel.util;
 
-import com.intel.util.text.TextRange;
+public interface Consumer<T> {
+  Consumer EMPTY_CONSUMER = new Consumer() {
+    public void consume(Object t) { }
+  };
 
-/**
- * TextRange with arbitrary offsets, not intended to be checked by {@link com.intel.util.text.TextRange#assertProperRange(int, int, Object)}.
- * Please use with caution.
- *
- * @author Dmitry Avdeev
- */
-public class UnfairTextRange extends TextRange {
-
-  public UnfairTextRange(int startOffset, int endOffset) {
-    super(startOffset, endOffset, false);
-  }
+  /**
+   * @param t consequently takes value of each element of the set this processor is passed to for processing.
+   * t is supposed to be a not-null value. If you need to pass {@code null}s to the consumer use {@link NullableConsumer} instead
+   */
+  void consume(T t);
 }

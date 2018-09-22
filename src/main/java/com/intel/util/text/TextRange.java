@@ -20,8 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intellij.openapi.util.Segment;
-import com.intellij.openapi.util.UnfairTextRange;
+import com.intel.util.Segment;
 
 import java.io.Serializable;
 

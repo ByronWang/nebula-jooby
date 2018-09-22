@@ -32,12 +32,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.intel.annotations.Contract;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intellij.openapi.util.Couple;
-import com.intellij.openapi.util.Factory;
-import com.intellij.util.Consumer;
-import com.intellij.util.NullableFunction;
-import com.intellij.util.Processor;
-import com.intellij.util.containers.SequenceIterator;
+//import com.intellij.openapi.util.Couple;
+//import com.intellij.openapi.util.Factory;
+//import com.intellij.util.Consumer;
+//import com.intellij.util.NullableFunction;
+//import com.intellij.util.Processor;
+//import com.intellij.util.containers.SequenceIterator;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -417,82 +417,82 @@ public class ContainerUtil extends ContainerUtilRt {
     }
     return res;
   }
-
-  @NotNull
-  @Contract(pure=true)
-  public static <K, V> Map<K,Couple<V>> diff(@NotNull Map<K, V> map1, @NotNull Map<K, V> map2) {
-    final Map<K, Couple<V>> res = newHashMap();
-    final Set<K> keys = newHashSet();
-    keys.addAll(map1.keySet());
-    keys.addAll(map2.keySet());
-    for (K k : keys) {
-      V v1 = map1.get(k);
-      V v2 = map2.get(k);
-      if (!(v1 == v2 || v1 != null && v1.equals(v2))) {
-        res.put(k, Couple.of(v1, v2));
-      }
-    }
-    return res;
-  }
-
-  public static <T> void processSortedListsInOrder(@NotNull List<? extends T> list1,
-                                                   @NotNull List<? extends T> list2,
-                                                   @NotNull Comparator<? super T> comparator,
-                                                   boolean mergeEqualItems,
-                                                   @NotNull Consumer<? super T> processor) {
-    int index1 = 0;
-    int index2 = 0;
-    while (index1 < list1.size() || index2 < list2.size()) {
-      T e;
-      if (index1 >= list1.size()) {
-        e = list2.get(index2++);
-      }
-      else if (index2 >= list2.size()) {
-        e = list1.get(index1++);
-      }
-      else {
-        T element1 = list1.get(index1);
-        T element2 = list2.get(index2);
-        int c = comparator.compare(element1, element2);
-        if (c == 0) {
-          index1++;
-          index2++;
-          if (mergeEqualItems) {
-            e = element1;
-          }
-          else {
-            processor.consume(element1);
-            e = element2;
-          }
-        }
-        else if (c < 0) {
-          e = element1;
-          index1++;
-        }
-        else {
-          e = element2;
-          index2++;
-        }
-      }
-      processor.consume(e);
-    }
-  }
-
-  @NotNull
-  @Contract(pure=true)
-  public static <T> List<T> mergeSortedLists(@NotNull List<? extends T> list1,
-                                             @NotNull List<? extends T> list2,
-                                             @NotNull Comparator<? super T> comparator,
-                                             boolean mergeEqualItems) {
-    final List<T> result = new ArrayList<T>(list1.size() + list2.size());
-    processSortedListsInOrder(list1, list2, comparator, mergeEqualItems, new Consumer<T>() {
-      @Override
-      public void consume(T t) {
-        result.add(t);
-      }
-    });
-    return result;
-  }
+//
+//  @NotNull
+//  @Contract(pure=true)
+//  public static <K, V> Map<K,Couple<V>> diff(@NotNull Map<K, V> map1, @NotNull Map<K, V> map2) {
+//    final Map<K, Couple<V>> res = newHashMap();
+//    final Set<K> keys = newHashSet();
+//    keys.addAll(map1.keySet());
+//    keys.addAll(map2.keySet());
+//    for (K k : keys) {
+//      V v1 = map1.get(k);
+//      V v2 = map2.get(k);
+//      if (!(v1 == v2 || v1 != null && v1.equals(v2))) {
+//        res.put(k, Couple.of(v1, v2));
+//      }
+//    }
+//    return res;
+//  }
+//
+//  public static <T> void processSortedListsInOrder(@NotNull List<? extends T> list1,
+//                                                   @NotNull List<? extends T> list2,
+//                                                   @NotNull Comparator<? super T> comparator,
+//                                                   boolean mergeEqualItems,
+//                                                   @NotNull Consumer<? super T> processor) {
+//    int index1 = 0;
+//    int index2 = 0;
+//    while (index1 < list1.size() || index2 < list2.size()) {
+//      T e;
+//      if (index1 >= list1.size()) {
+//        e = list2.get(index2++);
+//      }
+//      else if (index2 >= list2.size()) {
+//        e = list1.get(index1++);
+//      }
+//      else {
+//        T element1 = list1.get(index1);
+//        T element2 = list2.get(index2);
+//        int c = comparator.compare(element1, element2);
+//        if (c == 0) {
+//          index1++;
+//          index2++;
+//          if (mergeEqualItems) {
+//            e = element1;
+//          }
+//          else {
+//            processor.consume(element1);
+//            e = element2;
+//          }
+//        }
+//        else if (c < 0) {
+//          e = element1;
+//          index1++;
+//        }
+//        else {
+//          e = element2;
+//          index2++;
+//        }
+//      }
+//      processor.consume(e);
+//    }
+//  }
+//
+//  @NotNull
+//  @Contract(pure=true)
+//  public static <T> List<T> mergeSortedLists(@NotNull List<? extends T> list1,
+//                                             @NotNull List<? extends T> list2,
+//                                             @NotNull Comparator<? super T> comparator,
+//                                             boolean mergeEqualItems) {
+//    final List<T> result = new ArrayList<T>(list1.size() + list2.size());
+//    processSortedListsInOrder(list1, list2, comparator, mergeEqualItems, new Consumer<T>() {
+//      @Override
+//      public void consume(T t) {
+//        result.add(t);
+//      }
+//    });
+//    return result;
+//  }
 
   @NotNull
   @Contract(pure=true)
@@ -566,44 +566,44 @@ public class ContainerUtil extends ContainerUtilRt {
     }
     return null;
   }
-
-  public static <T> boolean process(@NotNull Iterable<? extends T> iterable, @NotNull Processor<T> processor) {
-    for (final T t : iterable) {
-      if (!processor.process(t)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  public static <T> boolean process(@NotNull List<? extends T> list, @NotNull Processor<T> processor) {
-    //noinspection ForLoopReplaceableByForEach
-    for (int i = 0, size = list.size(); i < size; i++) {
-      T t = list.get(i);
-      if (!processor.process(t)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  public static <T> boolean process(@NotNull T[] iterable, @NotNull Processor<? super T> processor) {
-    for (final T t : iterable) {
-      if (!processor.process(t)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  public static <T> boolean process(@NotNull Iterator<T> iterator, @NotNull Processor<? super T> processor) {
-    while (iterator.hasNext()) {
-      if (!processor.process(iterator.next())) {
-        return false;
-      }
-    }
-    return true;
-  }
+//
+//  public static <T> boolean process(@NotNull Iterable<? extends T> iterable, @NotNull Processor<T> processor) {
+//    for (final T t : iterable) {
+//      if (!processor.process(t)) {
+//        return false;
+//      }
+//    }
+//    return true;
+//  }
+//
+//  public static <T> boolean process(@NotNull List<? extends T> list, @NotNull Processor<T> processor) {
+//    //noinspection ForLoopReplaceableByForEach
+//    for (int i = 0, size = list.size(); i < size; i++) {
+//      T t = list.get(i);
+//      if (!processor.process(t)) {
+//        return false;
+//      }
+//    }
+//    return true;
+//  }
+//
+//  public static <T> boolean process(@NotNull T[] iterable, @NotNull Processor<? super T> processor) {
+//    for (final T t : iterable) {
+//      if (!processor.process(t)) {
+//        return false;
+//      }
+//    }
+//    return true;
+//  }
+//
+//  public static <T> boolean process(@NotNull Iterator<T> iterator, @NotNull Processor<? super T> processor) {
+//    while (iterator.hasNext()) {
+//      if (!processor.process(iterator.next())) {
+//        return false;
+//      }
+//    }
+//    return true;
+//  }
 
   @Nullable
   @Contract(pure=true)
@@ -902,38 +902,38 @@ public class ContainerUtil extends ContainerUtilRt {
       }
     };
   }
-
-  @SuppressWarnings({"unchecked", "LambdaUnfriendlyMethodOverload"})
-  @NotNull
-  @Contract(pure=true)
-  public static <T> Iterable<T> concat(@NotNull final Iterable<? extends T>... iterables) {
-    if (iterables.length == 0) return emptyIterable();
-    if (iterables.length == 1) return (Iterable<T>)iterables[0];
-    return new Iterable<T>() {
-      @NotNull
-      @Override
-      public Iterator<T> iterator() {
-        Iterator[] iterators = new Iterator[iterables.length];
-        for (int i = 0; i < iterables.length; i++) {
-          Iterable<? extends T> iterable = iterables[i];
-          iterators[i] = iterable.iterator();
-        }
-        return concatIterators(iterators);
-      }
-    };
-  }
-
-  @NotNull
-  @Contract(pure=true)
-  public static <T> Iterator<T> concatIterators(@NotNull Iterator<T>... iterators) {
-    return new SequenceIterator<T>(iterators);
-  }
-
-  @NotNull
-  @Contract(pure=true)
-  public static <T> Iterator<T> concatIterators(@NotNull Collection<Iterator<T>> iterators) {
-    return new SequenceIterator<T>(iterators);
-  }
+//
+//  @SuppressWarnings({"unchecked", "LambdaUnfriendlyMethodOverload"})
+//  @NotNull
+//  @Contract(pure=true)
+//  public static <T> Iterable<T> concat(@NotNull final Iterable<? extends T>... iterables) {
+//    if (iterables.length == 0) return emptyIterable();
+//    if (iterables.length == 1) return (Iterable<T>)iterables[0];
+//    return new Iterable<T>() {
+//      @NotNull
+//      @Override
+//      public Iterator<T> iterator() {
+//        Iterator[] iterators = new Iterator[iterables.length];
+//        for (int i = 0; i < iterables.length; i++) {
+//          Iterable<? extends T> iterable = iterables[i];
+//          iterators[i] = iterable.iterator();
+//        }
+//        return concatIterators(iterators);
+//      }
+//    };
+//  }
+//
+//  @NotNull
+//  @Contract(pure=true)
+//  public static <T> Iterator<T> concatIterators(@NotNull Iterator<T>... iterators) {
+//    return new SequenceIterator<T>(iterators);
+//  }
+//
+//  @NotNull
+//  @Contract(pure=true)
+//  public static <T> Iterator<T> concatIterators(@NotNull Collection<Iterator<T>> iterators) {
+//    return new SequenceIterator<T>(iterators);
+//  }
 
   /**
    * @return read-only list consisting of the lists added together
@@ -1517,13 +1517,13 @@ public class ContainerUtil extends ContainerUtilRt {
     return value;
   }
 
-  public static <T, V> V getOrCreate(@NotNull Map<T, V> result, final T key, @NotNull Factory<V> factory) {
-    V value = result.get(key);
-    if (value == null) {
-      result.put(key, value = factory.create());
-    }
-    return value;
-  }
+//  public static <T, V> V getOrCreate(@NotNull Map<T, V> result, final T key, @NotNull Factory<V> factory) {
+//    V value = result.get(key);
+//    if (value == null) {
+//      result.put(key, value = factory.create());
+//    }
+//    return value;
+//  }
 
   @NotNull
   @Contract(pure=true)
@@ -1579,19 +1579,19 @@ public class ContainerUtil extends ContainerUtilRt {
     }
     return count;
   }
-
-  @NotNull
-  @Contract(pure=true)
-  public static <T> List<T> unfold(@Nullable T t, @NotNull NullableFunction<? super T, ? extends T> next) {
-    if (t == null) return emptyList();
-
-    List<T> list = new ArrayList<T>();
-    while (t != null) {
-      list.add(t);
-      t = next.apply(t);
-    }
-    return list;
-  }
+//
+//  @NotNull
+//  @Contract(pure=true)
+//  public static <T> List<T> unfold(@Nullable T t, @NotNull NullableFunction<? super T, ? extends T> next) {
+//    if (t == null) return emptyList();
+//
+//    List<T> list = new ArrayList<T>();
+//    while (t != null) {
+//      list.add(t);
+//      t = next.apply(t);
+//    }
+//    return list;
+//  }
 
   @NotNull
   @Contract(pure=true)

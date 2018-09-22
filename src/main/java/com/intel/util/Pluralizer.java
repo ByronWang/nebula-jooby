@@ -27,8 +27,6 @@ package com.intel.util;
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intellij.util.Consumer;
-import com.intellij.util.containers.JBIterable;
 
 import static com.intel.util.StringUtil.notNullize;
 

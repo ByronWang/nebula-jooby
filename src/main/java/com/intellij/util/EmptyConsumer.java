@@ -15,6 +15,8 @@
  */
 package com.intellij.util;
 
+import com.intel.util.Consumer;
+
 public class EmptyConsumer {
 
   @SuppressWarnings("unchecked")

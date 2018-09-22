@@ -15,6 +15,8 @@
  */
 package com.intellij.util;
 
+import com.intel.util.Consumer;
+
 public interface CatchingConsumer<T, E extends Throwable> extends Consumer<T> {
   void consume(E e);
 }

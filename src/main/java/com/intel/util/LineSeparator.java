@@ -8,8 +8,6 @@ import java.nio.charset.Charset;
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
 
-import ch.qos.logback.core.util.SystemInfo;
-
 /**
  * <p>
  * Identifies a line separator: either Unix ({@code \n}), Windows (@{code \r\n})

@@ -16,6 +16,7 @@
 package com.intellij.openapi.util;
 
 import com.intel.annotations.NotNull;
+import com.intel.util.Segment;
 import com.intel.util.text.TextRange;
 
 /**

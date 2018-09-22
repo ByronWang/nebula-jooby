@@ -1,16 +1,12 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.util.containers;
+package com.intel.util;
 
 
 import com.intel.annotations.NotNull;
 import com.intel.annotations.Nullable;
-import com.intel.util.Comparing;
-import com.intel.util.Condition;
-import com.intel.util.Conditions;
-import com.intel.util.ContainerUtil;
-import com.intel.util.ContainerUtilRt;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.*;
+import com.intellij.util.containers.JBIterator;
 
 import java.util.*;
 
@@ -150,9 +146,9 @@ public abstract class JBIterable<E> implements Iterable<E> {
     return (T)iterator();
   }
 
-  public final boolean processEach(@NotNull Processor<E> processor) {
-    return ContainerUtil.process(this, processor);
-  }
+//  public final boolean processEach(@NotNull Processor<E> processor) {
+//    return ContainerUtil.process(this, processor);
+//  }
 
   public final void consumeEach(@NotNull Consumer<? super E> consumer) {
     for (E e : this) {

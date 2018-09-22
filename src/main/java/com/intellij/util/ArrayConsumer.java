@@ -15,6 +15,8 @@
  */
 package com.intellij.util;
 
+import com.intel.util.Consumer;
+
 /**
  * @author peter
  */

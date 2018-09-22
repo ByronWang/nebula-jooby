@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.intel.annotations.NotNull;
+import com.intel.util.Consumer;
 
 /**
  * @author peter
