@@ -21,6 +21,7 @@ import com.typesafe.config.Config;
 public class DbTableModule implements Jooby.Module {
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
+	@SuppressWarnings("unused")
 	public void configure(Env env, Config conf, Binder binder) {
 		Router router = env.router();
 
