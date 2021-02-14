@@ -30,6 +30,7 @@
 		<nebula.version>0.1.1-SNAPSHOT</nebula.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
+		<tinyasm.version>0.2.0</tinyasm.version>
 
 		<!-- Startup class -->
 		<application.class>nebula.App</application.class>
@@ -124,9 +125,10 @@
 			<version>${nebula.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>nebula</groupId>
-			<artifactId>nebula-asm</artifactId>
-			<version>${nebula.version}</version>
+			<groupId>com.github.ByronWang</groupId>
+			<artifactId>tinyasm-tool</artifactId>
+			<version>${tinyasm.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>nebula</groupId>

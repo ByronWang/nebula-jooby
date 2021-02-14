@@ -1,7 +1,6 @@
 package nebula.module;
 
-import static nebula.tinyasm.util.RefineCode.excludeLineNumber;
-import static nebula.tinyasm.util.RefineCode.skipToString;
+import static nebula.module.RefineCode.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;

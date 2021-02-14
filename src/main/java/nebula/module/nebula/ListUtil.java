@@ -40,8 +40,10 @@ public class ListUtil {
 			} else if ("q".equals(name)) {
 				Condition conditionQ = Condition.empty();
 				value = value.substring(1, value.length() - 1).replace("\\\"", "\"");
-				for (FieldMapper f : fields.filter(f -> f.getPojoClazz() == String.class)) {
-					conditionQ = conditionQ.or(Condition.field(f.getColumn().getName()).condition(ConditionOp.CONTAIN, value));
+				for (FieldMapper f : fields) {
+					if (f.getPojoClazz() == String.class) {
+						conditionQ = conditionQ.or(Condition.field(f.getColumn().getName()).condition(ConditionOp.CONTAIN, value));
+					}
 				}
 				condition = condition.and(conditionQ);
 			}
