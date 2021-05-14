@@ -17,19 +17,19 @@ import org.jooby.Status;
 import com.google.inject.Binder;
 import com.typesafe.config.Config;
 
-import nebula.data.jdbc.ClazzDefinition;
-import nebula.data.jdbc.FieldMapper;
-import nebula.data.jdbc.PageList;
-import nebula.data.jdbc.Repository;
-import nebula.data.jdbc.RepositoryFactory;
-import nebula.data.query.Condition;
-import nebula.data.query.OrderBy;
-import nebula.data.query.OrderByOp;
-import views.Layout;
+import cn.sj1.nebula.data.PageList;
+import cn.sj1.nebula.data.Repository;
+import cn.sj1.nebula.data.jdbc.EntityORMappingDefinition;
+import cn.sj1.nebula.data.jdbc.EntityORMappingDefinitionList;
+import cn.sj1.nebula.data.jdbc.JdbcRepositoryFactory;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.OrderBy;
+import cn.sj1.nebula.data.query.OrderByOp;
 import views.Field;
+import views.Layout;
 
 public class Nebula implements Jooby.Module {
-	RepositoryFactory repositoryFactory;
+	JdbcRepositoryFactory repositoryFactory;
 
 	public Nebula() {
 		super();
@@ -45,7 +45,7 @@ public class Nebula implements Jooby.Module {
 		env.set(Nebula.class, this);
 
 		try {
-			this.repositoryFactory = new RepositoryFactory(dataSource.getConnection());
+			this.repositoryFactory = new JdbcRepositoryFactory(dataSource.getConnection());
 
 //			env.set(Nebula.class, this);
 		} catch (SQLException e) {
@@ -54,11 +54,11 @@ public class Nebula implements Jooby.Module {
 	}
 
 	public <T> void require(Env env, Class<T> clazz) {
-		ClazzDefinition clazzDefinition = repositoryFactory.build(clazz);
+		EntityORMappingDefinitionList clazzDefinition = repositoryFactory.build(clazz);
 		String resourceName = clazzDefinition.getName();
 		Router router = env.router();
 
-		Class<T> actualClazz = repositoryFactory.actualClazz(clazzDefinition);
+		Class<T> actualClazz = repositoryFactory.getEntityImplClass(clazzDefinition);
 
 		Repository<T> objectRepository = repositoryFactory.getRepository(clazzDefinition);
 		objectRepository.init();
@@ -162,7 +162,7 @@ public class Nebula implements Jooby.Module {
 			router.delete("/:id", req -> {
 				long id = req.param("id").longValue();
 
-				if (objectRepository.delete(id) < 1) {
+				if (objectRepository.deleteById(id) < 1) {
 					throw new Err(Status.NOT_FOUND);
 				}
 				return Results.noContent();
@@ -170,43 +170,43 @@ public class Nebula implements Jooby.Module {
 		});
 	}
 
-	private Layout buildCreateView(ClazzDefinition clazzDefinition) {
+	private Layout buildCreateView(EntityORMappingDefinitionList clazzDefinition) {
 		List<Field> fields = new ArrayList<>();
-		for (FieldMapper c : clazzDefinition.getFields()) {
+		for (EntityORMappingDefinition c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextInput"));
 		}
 		final Layout view = new Layout(fields.toArray(new Field[0]));
 		return view;
 	}
 
-	private Layout buildShowView(ClazzDefinition clazzDefinition) {
+	private Layout buildShowView(EntityORMappingDefinitionList clazzDefinition) {
 		List<Field> fields = new ArrayList<>();
-		for (FieldMapper c : clazzDefinition.getFields()) {
+		for (EntityORMappingDefinition c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextField"));
 		}
 		final Layout view = new Layout(fields.toArray(new Field[0]));
 		return view;
 	}
 
-	private Layout buildEditView(ClazzDefinition clazzDefinition) {
+	private Layout buildEditView(EntityORMappingDefinitionList clazzDefinition) {
 		List<Field> fields = new ArrayList<>();
-		for (FieldMapper c : clazzDefinition.getFields()) {
+		for (EntityORMappingDefinition c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextInput"));
 		}
 		final Layout view = new Layout(fields.toArray(new Field[0]));
 		return view;
 	}
 
-	private Layout buildSimpleListView(ClazzDefinition clazzDefinition) {
+	private Layout buildSimpleListView(EntityORMappingDefinitionList clazzDefinition) {
 		List<Field> fields = new ArrayList<>();
-		for (FieldMapper c : clazzDefinition.getFields()) {
+		for (EntityORMappingDefinition c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextField"));
 		}
 		final Layout view = new Layout(fields.toArray(new Field[0]));
 		return view;
 	}
 
-	private OrderBy orderby(ClazzDefinition clazzDefinition, String sort) {
+	private OrderBy orderby(EntityORMappingDefinitionList clazzDefinition, String sort) {
 		String[] aSort = sort.substring(1, sort.length() - 1).split(",");
 		String orderbyName = aSort[0];
 		orderbyName = orderbyName.substring(1, orderbyName.length() - 1);

@@ -27,10 +27,10 @@
 
 	<properties>
 		<jooby.version>1.5.0</jooby.version>
-		<nebula.version>0.1.1-SNAPSHOT</nebula.version>
+		<nebula.version>1.1.0</nebula.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
-		<tinyasm.version>0.2.0</tinyasm.version>
+		<tinyasm.version>0.3.4.1</tinyasm.version>
 
 		<!-- Startup class -->
 		<application.class>nebula.App</application.class>
@@ -125,7 +125,7 @@
 			<version>${nebula.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.ByronWang</groupId>
+			<groupId>cn.sj1</groupId>
 			<artifactId>tinyasm-tool</artifactId>
 			<version>${tinyasm.version}</version>
 			<scope>test</scope>

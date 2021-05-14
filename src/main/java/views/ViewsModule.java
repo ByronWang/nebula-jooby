@@ -14,9 +14,10 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Binder;
 import com.typesafe.config.Config;
 
-import nebula.jdbc.builders.schema.ColumnDefinition;
-import nebula.jdbc.builders.schema.ColumnList;
-import nebula.jdbc.builders.schema.DBSchemaMerge;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
+import cn.sj1.nebula.jdbc.builders.schema.ddl.DBSchemaMerge;
+
 
 public class ViewsModule implements Jooby.Module {
 	@SuppressWarnings("unused")
@@ -96,7 +97,7 @@ public class ViewsModule implements Jooby.Module {
 				List<Field> fields = new ArrayList<>();
 
 				for (ColumnDefinition c : columns) {
-					fields.add(new Field(c.getName().toLowerCase(), "TextInput"));
+					fields.add(new Field(c.name().toLowerCase(), "TextInput"));
 				}
 
 				Layout view = new Layout(fields.toArray(new Field[0]));

@@ -1,6 +1,6 @@
 package nebula.module;
 
-import nebula.jdbc.builders.schema.ColumnDefinition;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 
 public class FieldMapper {
 	final boolean primaryKey;

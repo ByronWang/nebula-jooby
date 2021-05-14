@@ -1,21 +1,5 @@
 package nebula.module;
 
-import static org.junit.Assert.assertEquals;
-import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
-
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.jdbi.v3.core.mapper.RowMapper;
-import org.jdbi.v3.core.statement.StatementContext;
-import org.junit.Test;
-
-import nebula.tinyasm.ClassBody;
-import nebula.tinyasm.ClassBuilder;
-
 public class PetDBMapperTest extends TestBase {
 
 	String clazz = PetDBMapper.class.getName();

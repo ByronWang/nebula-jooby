@@ -5,8 +5,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
-import org.antlr.runtime.RecognitionException;
-
 public class TypeLoaderForTest extends SystemTypeLoader {
 	public TypeLoaderForTest() {
 	}
@@ -14,7 +12,7 @@ public class TypeLoaderForTest extends SystemTypeLoader {
 	public List<TypeImp> testDefineNebula(Reader in) {
 		try {
 			return super.defineNebula(in);
-		} catch (RecognitionException e) {
+		} catch (NebulaParseException e) {
 			log.error(e.getClass().getName(),e);
 			throw new RuntimeException(e);
 		}
@@ -23,7 +21,8 @@ public class TypeLoaderForTest extends SystemTypeLoader {
 	public TypeImp load(String text) {
 		try {
 			return super.defineNebula(new StringReader(text)).get(0);
-		} catch (RecognitionException e) {
+		} catch (NebulaParseException e) {
+			log.error(e.getClass().getName(),e);
 			throw new RuntimeException(e);
 		}
 	}

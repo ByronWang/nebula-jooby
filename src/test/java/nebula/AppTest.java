@@ -1,10 +1,5 @@
 package nebula;
 
-import org.h2.bnf.Rule;
-import org.jooby.test.JoobyRule;
-import org.junit.ClassRule;
-import org.junit.Test;
-
 /**
  * @author jooby generator
  */
