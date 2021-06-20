@@ -19,9 +19,9 @@ import com.typesafe.config.Config;
 
 import cn.sj1.nebula.data.PageList;
 import cn.sj1.nebula.data.Repository;
-import cn.sj1.nebula.data.jdbc.EntityORMappingDefinition;
-import cn.sj1.nebula.data.jdbc.EntityORMappingDefinitionList;
 import cn.sj1.nebula.data.jdbc.JdbcRepositoryFactory;
+import cn.sj1.nebula.data.jdbc.PersistentEntity;
+import cn.sj1.nebula.data.jdbc.PersistentProperty;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.query.OrderByOp;
@@ -54,7 +54,7 @@ public class Nebula implements Jooby.Module {
 	}
 
 	public <T> void require(Env env, Class<T> clazz) {
-		EntityORMappingDefinitionList clazzDefinition = repositoryFactory.build(clazz);
+		PersistentEntity clazzDefinition = repositoryFactory.build(clazz);
 		String resourceName = clazzDefinition.getName();
 		Router router = env.router();
 
@@ -170,43 +170,43 @@ public class Nebula implements Jooby.Module {
 		});
 	}
 
-	private Layout buildCreateView(EntityORMappingDefinitionList clazzDefinition) {
+	private Layout buildCreateView(PersistentEntity clazzDefinition) {
 		List<Field> fields = new ArrayList<>();
-		for (EntityORMappingDefinition c : clazzDefinition.getFields()) {
+		for (PersistentProperty c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextInput"));
 		}
 		final Layout view = new Layout(fields.toArray(new Field[0]));
 		return view;
 	}
 
-	private Layout buildShowView(EntityORMappingDefinitionList clazzDefinition) {
+	private Layout buildShowView(PersistentEntity clazzDefinition) {
 		List<Field> fields = new ArrayList<>();
-		for (EntityORMappingDefinition c : clazzDefinition.getFields()) {
+		for (PersistentProperty c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextField"));
 		}
 		final Layout view = new Layout(fields.toArray(new Field[0]));
 		return view;
 	}
 
-	private Layout buildEditView(EntityORMappingDefinitionList clazzDefinition) {
+	private Layout buildEditView(PersistentEntity clazzDefinition) {
 		List<Field> fields = new ArrayList<>();
-		for (EntityORMappingDefinition c : clazzDefinition.getFields()) {
+		for (PersistentProperty c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextInput"));
 		}
 		final Layout view = new Layout(fields.toArray(new Field[0]));
 		return view;
 	}
 
-	private Layout buildSimpleListView(EntityORMappingDefinitionList clazzDefinition) {
+	private Layout buildSimpleListView(PersistentEntity clazzDefinition) {
 		List<Field> fields = new ArrayList<>();
-		for (EntityORMappingDefinition c : clazzDefinition.getFields()) {
+		for (PersistentProperty c : clazzDefinition.getFields()) {
 			fields.add(new Field(c.getFieldName(), "TextField"));
 		}
 		final Layout view = new Layout(fields.toArray(new Field[0]));
 		return view;
 	}
 
-	private OrderBy orderby(EntityORMappingDefinitionList clazzDefinition, String sort) {
+	private OrderBy orderby(PersistentEntity clazzDefinition, String sort) {
 		String[] aSort = sort.substring(1, sort.length() - 1).split(",");
 		String orderbyName = aSort[0];
 		orderbyName = orderbyName.substring(1, orderbyName.length() - 1);

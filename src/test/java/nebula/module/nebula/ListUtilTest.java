@@ -6,9 +6,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import cn.sj1.nebula.data.jdbc.EntityORMappingDefinition;
-import cn.sj1.nebula.data.jdbc.EntityORMappingDefinitionList;
 import cn.sj1.nebula.data.jdbc.FieldList;
+import cn.sj1.nebula.data.jdbc.PersistentEntity;
+import cn.sj1.nebula.data.jdbc.PersistentProperty;
 import cn.sj1.nebula.data.query.CommonSQLConditionVisitor;
 import cn.sj1.nebula.data.query.Condition;
 import nebula.module.User;
@@ -18,11 +18,11 @@ public class ListUtilTest {
 	@Test
 	public void test() {
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new EntityORMappingDefinition("id", "getId", long.class, INTEGER("ID")));
-		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, VARCHAR("NAME")));
-		clazzFields.push(new EntityORMappingDefinition("age", "getAge", int.class, INTEGER("age")));
-		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, VARCHAR("description")));
-		EntityORMappingDefinitionList clazzDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzFields.push(new PersistentProperty("id", "getId", long.class, INTEGER("ID")));
+		clazzFields.push(new PersistentProperty("name", "getName", String.class, VARCHAR("NAME")));
+		clazzFields.push(new PersistentProperty("age", "getAge", int.class, INTEGER("age")));
+		clazzFields.push(new PersistentProperty("description", "getDescription", String.class, VARCHAR("description")));
+		PersistentEntity clazzDefinition = new PersistentEntity(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		assertEquals("NAME = 'myname'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"myname\"}")));
 //		assertEquals("NAME = 'my\"name'", str(ListUtil.filter(clazzDefinition, " {\"name\":\"my\\\"name\"}")));

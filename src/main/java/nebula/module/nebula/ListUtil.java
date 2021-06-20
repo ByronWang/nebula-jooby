@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 
 import org.jdbi.v3.core.mapper.reflect.FieldMapper;
 
-import cn.sj1.nebula.data.jdbc.EntityORMappingDefinition;
-import cn.sj1.nebula.data.jdbc.EntityORMappingDefinitionList;
 import cn.sj1.nebula.data.jdbc.FieldList;
+import cn.sj1.nebula.data.jdbc.PersistentEntity;
+import cn.sj1.nebula.data.jdbc.PersistentProperty;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.ConditionOp;
 
@@ -21,7 +21,7 @@ public class ListUtil {
 
 	static final Pattern filterPattern = Pattern.compile(String.format(",?%1$s:%2$s", NAME, INTorSTRING));
 
-	public static Condition filter(EntityORMappingDefinitionList clazz, String filter) {
+	public static Condition filter(PersistentEntity clazz, String filter) {
 		Matcher m = filterPattern.matcher(filter);
 		FieldList fields = clazz.getFields();
 		Condition condition = Condition.empty();
@@ -30,7 +30,7 @@ public class ListUtil {
 			String name = namePairs[0];
 			String value = m.group(2);
 			if (fields.containsKey(name)) {
-				EntityORMappingDefinition f = fields.get(name);
+				PersistentProperty f = fields.get(name);
 				if (f.getPojoClazz() == String.class) {
 					value = value.substring(1, value.length() - 1).replace("\\\"", "\"");
 					ConditionOp op = ConditionOp.EQ;
@@ -42,7 +42,7 @@ public class ListUtil {
 			} else if ("q".equals(name)) {
 				Condition conditionQ = Condition.empty();
 				value = value.substring(1, value.length() - 1).replace("\\\"", "\"");
-				for (EntityORMappingDefinition f : fields) {
+				for (PersistentProperty f : fields) {
 					if (f.getPojoClazz() == String.class) {
 						conditionQ = conditionQ.or(Condition.field(f.getColumn().name()).condition(ConditionOp.CONTAIN, value));
 					}

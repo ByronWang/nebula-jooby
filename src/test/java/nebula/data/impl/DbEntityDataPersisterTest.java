@@ -7,7 +7,7 @@ public class DbEntityDataPersisterTest extends TestCase {
 
 	protected void setUp() throws Exception {
 
-		TypeDatastore typeDatastore = new TypeDatastore(new SystemTypeLoader());
+//		TypeDatastore typeDatastore = new TypeDatastore(new SystemTypeLoader());
 
 	}
 
